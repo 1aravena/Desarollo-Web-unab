@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <script>
+            function saludar(){
+                console.log("Hola");
+            }
+            function cambioTexto(e){
+                if (e.key === "Enter"){
+                    e.preventDefault();
+                    console.log("Hola " + document.getElementById("texto").value);
+                }
+            }
+            function validar(){
+                let valor = document.getElementById("texto2").value;
+                if (valor === ""){
+                    console.log("Texto vacio");
+                    document.getElementById("valTexto2").style.display = "";
+                } else {
+                    document.getElementById("valTexto2").style.display = "none";
+                }
+            }
+            let x, y, z;
+            x = 5;
+            y = 2;
+            z = x + y;
+            z = x % y;
+            z += 2; // z = z + 2;
+            z *= 2; // z = z * 2;
+            z = x ** y; // z = base(x)exp(y)
+            console.log(z);
+            // Estructuras control python and : javascript && - python or : javascript ||
+            if (z < 10 && y === 2){ // y == 2 -> "2" == 2 V -> "2" === 2 F
+                console.log("z unitario");
+            } else if(z < 20){
+                console.log("z decimal");
+            } else {
+                console.log("Otro Caso");
+            }
+            try {
+                console.log("Control");
+                throw "Muy Lento";
+            } catch (err) {
+                console.log(err);
+            }
+            let text;
+            if (Math.random() < 0.5){
+                console.log("Cara");
+            } else {
+                console.log("Sello");
+            }
+            console.log(typeof(z));
+            class Persona{}
+            const p = new Persona();
+            if (p instanceof Persona){
+                console.log("Es persona");
+            }
+            // iteraciones
+            for (let i=0; i < 3; i++) { // for i in range(3) : print(i)
+                console.log(i);
+            }
+            let j = 0;
+            while(j < 3){
+                console.log(j);
+                j++;
+            }
+            let k = 0;
+            do {
+                console.log(k);
+                k++
+            } while (k < 3);
+            const marcas = ["BMW", "Volvo", "Ford"];
+            let l=0;
+            let todasMarcas = "";
+            for(;marcas[l];){
+                todasMarcas += " " + marcas[l];
+                l++;
+            }
+            console.log(todasMarcas);
+            let m = 0;
+            let tMarcas = "";
+            while(marcas[m]){
+                tMarcas += " " + marcas[m];
+                m++
+            }
+            console.log(tMarcas);
+        </script>
+    </head>
+    <body>
+        <p id="msg"></p>
+        <select name="comuna" id="com"></select>
+        <script>
+            console.log("Empezo Codigo");
+            document.getElementById("msg").innerText = "Hola";
+            document.getElementById("com").innerHTML = '<option value="1">Santiago</option><option value="2">Talca</option>';
+        </script>
+        <button type="button" onclick="alert('Clic');">Evento</button>
+        <button type="button" onclick="console.log('clic');">Evento2</button>
+        <button type="button" onclick="window.print();">Imprimir</button>
+        <button type="button" onclick="saludar();">Saludo</button>
+        <input type="text" id="texto" onkeyDown="cambioTexto(event);" />
+        <input type="text" id="texto2" onblur="validar();" /><span id="valTexto2" style="display:none; color:red">Debe Ingresar Texto</span>
+    </body>
+</html>
