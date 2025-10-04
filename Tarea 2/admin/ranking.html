@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ranking de Pizzas - La Fornace Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-10 Ranking de Pizzas más vendidas -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace Admin</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cocina.html">Cocina</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reportes.html">Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="ranking.html">Ranking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="notificaciones.html">Notificaciones</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">Ranking de Pizzas Más Vendidas</h2>
+                
+                <div id="mensaje-container"></div>
+
+                <!-- Filtros -->
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Filtros</h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="fecha-desde-ranking" class="form-label">Desde</label>
+                                <input type="date" class="form-control" id="fecha-desde-ranking">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="fecha-hasta-ranking" class="form-label">Hasta</label>
+                                <input type="date" class="form-control" id="fecha-hasta-ranking">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-success w-100" onclick="generarRanking()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill me-1" viewBox="0 0 16 16">
+                                        <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935z"/>
+                                    </svg>
+                                    Aplicar Filtro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ranking -->
+                <div id="ranking-container" style="display: none;">
+                    <!-- Resumen -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted mb-2">Total Pizzas Vendidas</h6>
+                                    <h3 class="text-warning mb-0" id="total-pizzas">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 border-start border-info border-4 h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted mb-2">Pizzas Diferentes</h6>
+                                    <h3 class="text-info mb-0" id="tipos-pizzas">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted mb-2">Pizza Más Vendida</h6>
+                                    <h3 class="text-success mb-0" id="pizza-top" style="font-size: 1.2rem;">-</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Ranking -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Ranking Completo</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="80" class="text-center">Posición</th>
+                                            <th>Pizza</th>
+                                            <th width="150" class="text-center">Cantidad</th>
+                                            <th width="120" class="text-end">% del Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-ranking">
+                                        <!-- Se llena dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado sin datos -->
+                <div id="sin-ranking" class="text-center py-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-trophy text-muted mb-3" viewBox="0 0 16 16">
+                        <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zM3 1c-.286 0-.514.166-.614.377-.1.21-.092.471.025.672.117.2.291.296.496.296a.5.5 0 0 0 .093-.983zm10 0a.5.5 0 0 0 .093.983c.205 0 .379-.096.496-.296.117-.201.125-.462.025-.672C13.514 1.166 13.286 1 13 1zm-3.5 0a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 1 0v-10a.5.5 0 0 0-.5-.5z"/>
+                    </svg>
+                    <h4 class="text-muted">Selecciona un período para ver el ranking</h4>
+                    <p class="text-muted">Utiliza los filtros para analizar las pizzas más vendidas</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../data/mock-data.js"></script>
+    <script src="../scripts.js"></script>
+    
+    <script>
+        // Inicializar fechas por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoy = new Date();
+            const hace30Dias = new Date();
+            hace30Dias.setDate(hoy.getDate() - 30);
+            
+            document.getElementById('fecha-hasta-ranking').valueAsDate = hoy;
+            document.getElementById('fecha-desde-ranking').valueAsDate = hace30Dias;
+        });
+
+        // Generar ranking
+        function generarRanking() {
+            const fechaDesde = document.getElementById('fecha-desde-ranking').value;
+            const fechaHasta = document.getElementById('fecha-hasta-ranking').value;
+            
+            if (!fechaDesde || !fechaHasta) {
+                mostrarError('Por favor selecciona ambas fechas');
+                return;
+            }
+            
+            if (new Date(fechaDesde) > new Date(fechaHasta)) {
+                mostrarError('La fecha "Desde" debe ser anterior a la fecha "Hasta"');
+                return;
+            }
+            
+            // Obtener pedidos del localStorage
+            const pedidos = JSON.parse(localStorage.getItem('pedidosLaFornace') || '[]');
+            
+            // Filtrar pedidos por rango de fechas y que no estén anulados
+            const pedidosFiltrados = pedidos.filter(p => {
+                const fechaPedido = new Date(p.fecha);
+                const desde = new Date(fechaDesde);
+                const hasta = new Date(fechaHasta);
+                hasta.setHours(23, 59, 59);
+                
+                return fechaPedido >= desde && fechaPedido <= hasta && p.estado !== 'anulado';
+            });
+            
+            if (pedidosFiltrados.length === 0) {
+                mostrarInfo('No hay pedidos en el período seleccionado');
+                document.getElementById('ranking-container').style.display = 'none';
+                document.getElementById('sin-ranking').style.display = 'block';
+                return;
+            }
+            
+            // Calcular ventas por pizza
+            const ventasPorPizza = {};
+            let totalPizzas = 0;
+            
+            pedidosFiltrados.forEach(pedido => {
+                pedido.items.forEach(item => {
+                    if (!ventasPorPizza[item.nombre]) {
+                        ventasPorPizza[item.nombre] = 0;
+                    }
+                    ventasPorPizza[item.nombre] += item.cantidad;
+                    totalPizzas += item.cantidad;
+                });
+            });
+            
+            // Convertir a array y ordenar por cantidad (mayor a menor)
+            const ranking = Object.entries(ventasPorPizza)
+                .map(([nombre, cantidad]) => ({
+                    nombre,
+                    cantidad,
+                    porcentaje: (cantidad / totalPizzas) * 100
+                }))
+                .sort((a, b) => b.cantidad - a.cantidad);
+            
+            if (ranking.length === 0) {
+                mostrarInfo('No hay pizzas vendidas en el período seleccionado');
+                document.getElementById('ranking-container').style.display = 'none';
+                document.getElementById('sin-ranking').style.display = 'block';
+                return;
+            }
+            
+            // Actualizar resumen
+            document.getElementById('total-pizzas').textContent = totalPizzas + ' pizzas';
+            document.getElementById('tipos-pizzas').textContent = ranking.length + ' tipos';
+            document.getElementById('pizza-top').textContent = ranking[0].nombre;
+            
+            // Renderizar tabla
+            renderizarRanking(ranking);
+            
+            // Mostrar resultados
+            document.getElementById('sin-ranking').style.display = 'none';
+            document.getElementById('ranking-container').style.display = 'block';
+            
+            mostrarExito(`Ranking generado: ${ranking.length} pizzas analizadas`);
+        }
+
+        // Renderizar ranking
+        function renderizarRanking(ranking) {
+            const tbody = document.getElementById('tabla-ranking');
+            
+            tbody.innerHTML = ranking.map((item, index) => {
+                const posicion = index + 1;
+                let posicionHtml = posicion;
+                let clasesFila = '';
+                let claseBorde = '';
+                
+                // Medallas y estilos para top 3
+                if (posicion === 1) {
+                    posicionHtml = '<span class="fs-4">🥇</span> 1';
+                    clasesFila = 'table-warning';
+                    claseBorde = 'border-start border-warning border-4';
+                } else if (posicion === 2) {
+                    posicionHtml = '<span class="fs-4">🥈</span> 2';
+                    clasesFila = 'table-light';
+                    claseBorde = 'border-start border-secondary border-4';
+                } else if (posicion === 3) {
+                    posicionHtml = '<span class="fs-4">🥉</span> 3';
+                    clasesFila = 'bg-light-bronze';
+                    claseBorde = 'border-start border-3';
+                    // Color bronce custom
+                    clasesFila = '';
+                    claseBorde = 'border-start border-3';
+                }
+                
+                return `
+                    <tr class="${clasesFila} ${claseBorde}">
+                        <td class="text-center fw-bold">${posicionHtml}</td>
+                        <td>
+                            <strong>${item.nombre}</strong>
+                            ${posicion <= 3 ? '<span class="badge bg-primary ms-2">Top 3</span>' : ''}
+                        </td>
+                        <td class="text-center">
+                            <strong class="text-primary">${item.cantidad}</strong> pizzas
+                        </td>
+                        <td class="text-end">
+                            <strong class="text-success">${item.porcentaje.toFixed(1)}%</strong>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Promociones - La Fornace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-13 Suscripción a Promociones -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Menú</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Tu Cuenta</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pedidos.html">Tus Pedidos</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-primary ms-lg-3" href="../carrito/index.html">
+                            Carrito <span class="badge text-bg-light ms-1" id="carrito-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <h2 class="mb-4">Preferencias de Promociones</h2>
+                
+                <div id="mensaje-container"></div>
+
+                <!-- Promociones por Email -->
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope me-2" viewBox="0 0 16 16">
+                                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                                    </svg>
+                                    Suscripción a Promociones
+                                </h5>
+                                <p class="text-muted mb-0">Recibe ofertas especiales, descuentos y novedades por correo electrónico</p>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="email-promo" style="width: 3rem; height: 1.5rem;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Beneficios -->
+                <div class="card mb-4 shadow-sm border-0 bg-light">
+                    <div class="card-body">
+                        <h5 class="mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-gift me-2" viewBox="0 0 16 16">
+                                <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 14.5V7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A2.968 2.968 0 0 1 3 2.506V2.5zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43a.522.522 0 0 0 .023.07zM9 3h2.932a.56.56 0 0 0 .023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0V3zM1 4v2h6V4H1zm8 0v2h6V4H9zm5 3H9v8h4.5a.5.5 0 0 0 .5-.5V7zm-7 8V7H2v7.5a.5.5 0 0 0 .5.5H7z"/>
+                            </svg>
+                            Beneficios de Suscribirse
+                        </h5>
+                        <ul class="mb-0">
+                            <li>Descuentos exclusivos hasta 30%</li>
+                            <li>Acceso anticipado a ofertas flash</li>
+                            <li>Degustaciones gratis en lanzamientos</li>
+                            <li>Notificaciones de nuevos productos</li>
+                            <li>Ofertas especiales semanales</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="index.html" class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                    <button type="button" class="btn btn-primary" onclick="guardarPreferencias()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                        </svg>
+                        Guardar Preferencias
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../data/mock-data.js"></script>
+    <script src="../scripts.js"></script>
+    
+    <script>
+        // Cargar preferencias al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarCarrito();
+            actualizarBadgeCarrito();
+            cargarPreferenciasPromos();
+        });
+
+        // Cargar preferencias de promociones
+        function cargarPreferenciasPromos() {
+            // Cargar desde localStorage si existe, si no usar datos de mock-data.js
+            const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioLaFornace') || 'null');
+            const datosUsuario = usuarioGuardado || usuario;
+            
+            // Cargar valores en los controles
+            document.getElementById('email-promo').checked = datosUsuario.suscritoPromos || false;
+        }
+
+        // Guardar preferencias
+        function guardarPreferencias() {
+            const emailPromo = document.getElementById('email-promo').checked;
+            
+            // Cargar usuario actual
+            const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioLaFornace') || 'null');
+            const datosUsuario = usuarioGuardado || {...usuario};
+            
+            // Actualizar suscripción
+            datosUsuario.suscritoPromos = emailPromo;
+            
+            // Guardar en localStorage
+            localStorage.setItem('usuarioLaFornace', JSON.stringify(datosUsuario));
+            
+            // Actualizar también el objeto global usuario
+            if (typeof usuario !== 'undefined') {
+                usuario.suscritoPromos = emailPromo;
+            }
+            
+            // Mostrar mensaje de éxito
+            const mensaje = emailPromo 
+                ? 'Suscripción activada - Recibirás promociones por email'
+                : 'Suscripción desactivada - No recibirás más promociones';
+            
+            mostrarExito(mensaje);
+            
+            // Scroll al inicio
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+
+

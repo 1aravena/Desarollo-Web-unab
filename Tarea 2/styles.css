@@ -1,0 +1,24 @@
+:root{
+  --fornace-brown:#5b2a1e; /* horno ladrillo oscuro */
+  --fornace-red:#7a2e1f;   /* tipografía logo */
+  --fornace-orange:#e5702a;/* flama */
+  --fornace-cream:#f3e6d6; /* fondo papel */
+}
+
+.bg-cream{background-color:var(--fornace-cream);} 
+.bg-fornace{background-color:var(--fornace-brown);} 
+
+.btn-primary{
+  background-color:var(--fornace-orange);
+  border-color:var(--fornace-orange);
+}
+.btn-primary:hover{background-color:#cf5f1f;border-color:#cf5f1f}
+
+.carousel-caption h5,
+.carousel-caption p{ text-shadow:0 2px 8px rgba(0,0,0,.6); }
+
+.card-title{ color:var(--fornace-red); }
+
+footer{ border-top:4px solid var(--fornace-orange); }
+
+

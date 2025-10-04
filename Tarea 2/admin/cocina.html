@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Órdenes de Cocina - La Fornace Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-08 Impresión Automática de Órdenes -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace Admin</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="cocina.html">Cocina</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reportes.html">Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ranking.html">Ranking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="notificaciones.html">Notificaciones</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Órdenes de Cocina</h2>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-success fs-6">Impresora: Conectada</span>
+                        <button class="btn btn-primary btn-sm" onclick="actualizarOrdenes()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise me-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                            </svg>
+                            Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="mensaje-container"></div>
+
+                <!-- Filtros de Estado -->
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="filtroEstado" id="filtro-todos" value="todos" checked>
+                            <label class="btn btn-outline-primary" for="filtro-todos">Todas</label>
+                            
+                            <input type="radio" class="btn-check" name="filtroEstado" id="filtro-confirmado" value="confirmado">
+                            <label class="btn btn-outline-primary" for="filtro-confirmado">Confirmados</label>
+                            
+                            <input type="radio" class="btn-check" name="filtroEstado" id="filtro-preparacion" value="en_preparacion">
+                            <label class="btn btn-outline-warning" for="filtro-preparacion">En Preparación</label>
+                            
+                            <input type="radio" class="btn-check" name="filtroEstado" id="filtro-camino" value="en_camino">
+                            <label class="btn btn-outline-info" for="filtro-camino">En Camino</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Órdenes -->
+                <div id="ordenes-container">
+                    <!-- Se llena dinámicamente -->
+                </div>
+
+                <!-- Estado Vacío -->
+                <div id="ordenes-vacias" class="text-center py-5" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-clipboard-check text-muted mb-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    <h4 class="text-muted">No hay órdenes pendientes</h4>
+                    <p class="text-muted">Todas las órdenes han sido procesadas</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Ver Ticket -->
+    <div class="modal fade" id="modalTicket" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-fornace text-white">
+                    <h5 class="modal-title">Ticket de Cocina</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="ticket-contenido" style="font-family: 'Courier New', monospace; white-space: pre-line;">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="imprimirTicket()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer me-1" viewBox="0 0 16 16">
+                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                        </svg>
+                        Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../data/mock-data.js"></script>
+    <script src="../scripts.js"></script>
+    
+    <script>
+        let ordenesActuales = [];
+        let filtroActual = 'todos';
+        let ordenSeleccionada = null;
+
+        // Cargar órdenes al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarOrdenes();
+            
+            // Event listeners para filtros
+            document.querySelectorAll('input[name="filtroEstado"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    filtroActual = this.value;
+                    renderizarOrdenes();
+                });
+            });
+        });
+
+        // Cargar órdenes desde localStorage
+        function cargarOrdenes() {
+            ordenesActuales = JSON.parse(localStorage.getItem('pedidosLaFornace') || '[]');
+            renderizarOrdenes();
+        }
+
+        // Actualizar órdenes
+        function actualizarOrdenes() {
+            cargarOrdenes();
+            mostrarExito('Órdenes actualizadas');
+        }
+
+        // Renderizar órdenes
+        function renderizarOrdenes() {
+            const container = document.getElementById('ordenes-container');
+            const vacioDiv = document.getElementById('ordenes-vacias');
+            
+            // Filtrar por estado
+            let ordenesFiltradas = ordenesActuales;
+            if (filtroActual !== 'todos') {
+                ordenesFiltradas = ordenesActuales.filter(o => o.estado === filtroActual);
+            }
+            
+            // Ordenar por fecha (más recientes primero)
+            ordenesFiltradas.sort((a, b) => b.id - a.id);
+            
+            if (ordenesFiltradas.length === 0) {
+                container.style.display = 'none';
+                vacioDiv.style.display = 'block';
+                return;
+            }
+            
+            container.style.display = 'block';
+            vacioDiv.style.display = 'none';
+            
+            container.innerHTML = ordenesFiltradas.map(orden => {
+                const estadoInfo = obtenerInfoEstadoCocina(orden.estado);
+                const resumenItems = orden.items.map(item => 
+                    `${item.cantidad}x ${item.nombre} (${item.tamaño})`
+                ).join('<br>');
+                
+                return `
+                    <div class="card mb-3 shadow-sm border-0 border-start border-${estadoInfo.colorBorder} border-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="mb-0">Orden #${orden.id}</h5>
+                                        <span class="badge ${estadoInfo.clase} fs-6">${estadoInfo.texto}</span>
+                                    </div>
+                                    <p class="text-muted mb-2">
+                                        <small>Fecha: ${orden.fecha} ${orden.hora || ''}</small>
+                                    </p>
+                                    <p class="mb-2"><strong>Items:</strong><br>${resumenItems}</p>
+                                    <p class="mb-0"><small class="text-muted">Dirección: ${orden.direccion}</small></p>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <button class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="verTicket(${orden.id})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-receipt me-1" viewBox="0 0 16 16">
+                                            <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z"/>
+                                            <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
+                                        </svg>
+                                        Ver Ticket
+                                    </button>
+                                    ${estadoInfo.mostrarBotonEstado ? `
+                                        <button class="btn btn-${estadoInfo.botonClase} btn-sm w-100" onclick="cambiarEstadoOrden(${orden.id}, '${estadoInfo.siguienteEstado}')">
+                                            ${estadoInfo.botonTexto}
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Obtener información del estado para cocina
+        function obtenerInfoEstadoCocina(estado) {
+            const estados = {
+                'confirmado': { 
+                    texto: 'Confirmado - Pendiente', 
+                    clase: 'bg-primary',
+                    colorBorder: 'primary',
+                    mostrarBotonEstado: true,
+                    botonTexto: 'Iniciar Preparación',
+                    botonClase: 'warning',
+                    siguienteEstado: 'en_preparacion'
+                },
+                'en_preparacion': { 
+                    texto: 'En Preparación', 
+                    clase: 'bg-warning text-dark',
+                    colorBorder: 'warning',
+                    mostrarBotonEstado: true,
+                    botonTexto: 'Listo para Envío',
+                    botonClase: 'info',
+                    siguienteEstado: 'en_camino'
+                },
+                'en_camino': { 
+                    texto: 'En Camino', 
+                    clase: 'bg-info',
+                    colorBorder: 'info',
+                    mostrarBotonEstado: false
+                },
+                'entregado': { 
+                    texto: 'Entregado', 
+                    clase: 'bg-success',
+                    colorBorder: 'success',
+                    mostrarBotonEstado: false
+                },
+                'anulado': { 
+                    texto: 'Anulado', 
+                    clase: 'bg-danger',
+                    colorBorder: 'danger',
+                    mostrarBotonEstado: false
+                }
+            };
+            return estados[estado] || { texto: estado, clase: 'bg-secondary', colorBorder: 'secondary', mostrarBotonEstado: false };
+        }
+
+        // Ver ticket
+        function verTicket(ordenId) {
+            ordenSeleccionada = ordenesActuales.find(o => o.id === ordenId);
+            if (!ordenSeleccionada) return;
+            
+            const ticket = generarTicket(ordenSeleccionada);
+            document.getElementById('ticket-contenido').textContent = ticket;
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalTicket'));
+            modal.show();
+        }
+
+        // Generar ticket de cocina
+        function generarTicket(orden) {
+            return `
+========================================
+        PIZZERÍA LA FORNACE
+        TICKET DE COCINA
+========================================
+
+Orden #: ${orden.id}
+Fecha: ${orden.fecha}
+Hora: ${orden.hora || ''}
+
+----------------------------------------
+ITEMS DEL PEDIDO:
+----------------------------------------
+
+${orden.items.map(item => `${item.cantidad}x ${item.nombre} (${item.tamaño})
+    Precio: ${formatearPrecio(item.precio)}`).join('\n\n')}
+
+----------------------------------------
+DIRECCIÓN DE ENTREGA:
+----------------------------------------
+${orden.direccion}
+
+${orden.eta ? `
+ETA: ${orden.eta}
+` : ''}
+----------------------------------------
+TOTAL: ${formatearPrecio(orden.total)}
+----------------------------------------
+
+Estado: ${obtenerInfoEstadoCocina(orden.estado).texto}
+
+========================================
+            `.trim();
+        }
+
+        // Imprimir ticket (simula impresión)
+        function imprimirTicket() {
+            if (!ordenSeleccionada) return;
+            
+            // Simulación de impresión
+            mostrarExito('Ticket enviado a impresora');
+            
+            // Cerrar modal
+            const modalEl = document.getElementById('modalTicket');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            
+            // En una aplicación real, aquí se enviaría el ticket a la impresora
+            // window.print() podría usarse para imprimir el contenido
+        }
+
+        // Cambiar estado de la orden
+        function cambiarEstadoOrden(ordenId, nuevoEstado) {
+            const index = ordenesActuales.findIndex(o => o.id === ordenId);
+            if (index !== -1) {
+                ordenesActuales[index].estado = nuevoEstado;
+                localStorage.setItem('pedidosLaFornace', JSON.stringify(ordenesActuales));
+                
+                const nombreEstado = obtenerInfoEstadoCocina(nuevoEstado).texto;
+                mostrarExito(`Orden actualizada a: ${nombreEstado}`);
+                
+                renderizarOrdenes();
+            }
+        }
+    </script>
+</body>
+</html>
+
+
