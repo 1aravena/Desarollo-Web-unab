@@ -57,43 +57,7 @@ const pizzas = [
   // ========================================
   // PEDIDOS - Historial
   // ========================================
-  const pedidos = [
-    {
-      id: 1001,
-      fecha: "2025-10-01",
-      hora: "19:30",
-      estado: "entregado",
-      items: [
-        { pizzaId: 1, nombre: "Hawaiana", tamaño: "grande", cantidad: 2, precio: 22700 },
-        { pizzaId: 2, nombre: "Pepperoni", tamaño: "mediana", cantidad: 1, precio: 19600 }
-      ],
-      total: 64900,
-      direccion: "Av. Libertador Bernardo O'Higgins 1234, Santiago"
-    },
-    {
-      id: 1002,
-      fecha: "2025-09-28",
-      hora: "20:15",
-      estado: "entregado",
-      items: [
-        { pizzaId: 3, nombre: "Vegetariana", tamaño: "grande", cantidad: 1, precio: 25900 }
-      ],
-      total: 25900,
-      direccion: "Av. Libertador Bernardo O'Higgins 1234, Santiago"
-    },
-    {
-      id: 1003,
-      fecha: "2025-09-25",
-      hora: "18:45",
-      estado: "anulado",
-      items: [
-        { pizzaId: 1, nombre: "Hawaiana", tamaño: "mediana", cantidad: 1, precio: 19600 }
-      ],
-      total: 19600,
-      direccion: "Av. Libertador Bernardo O'Higgins 1234, Santiago",
-      motivoAnulacion: "Error en la dirección de entrega"
-    }
-  ];
+  const pedidos = [];
   
   // ========================================
   // REPORTES - Ventas
@@ -114,11 +78,7 @@ const pizzas = [
   // ========================================
   // RANKING - Pizzas más vendidas
   // ========================================
-  const ranking = [
-    { pizzaId: 2, nombre: "Pepperoni", cantidadVendida: 45, totalVentas: 987000 },
-    { pizzaId: 1, nombre: "Hawaiana", cantidadVendida: 38, totalVentas: 862400 },
-    { pizzaId: 3, nombre: "Vegetariana", cantidadVendida: 29, totalVentas: 751100 }
-  ];
+  const ranking = [];
   
   // ========================================
   // CARRITO - Temporal (se guarda en localStorage)
