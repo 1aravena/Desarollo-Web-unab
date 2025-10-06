@@ -133,6 +133,11 @@
                 <div class="col-9 col-md-4">
                   <h5 class="card-title mb-1">${item.nombre}</h5>
                   <p class="card-text small text-muted text-capitalize mb-0">Tamaño: ${item.tamaño}</p>
+                  ${item.extras && item.extras.length > 0 ? `
+                    <p class="card-text small text-muted mb-1">
+                      Extras: ${item.extras.map(extra => extra.nombre).join(', ')}
+                    </p>
+                  ` : ''}
                   <p class="card-text small text-muted">${formatearPrecio(item.precio)} c/u</p>
                 </div>
                 <div class="col-12 col-md-3 mt-2 mt-md-0">

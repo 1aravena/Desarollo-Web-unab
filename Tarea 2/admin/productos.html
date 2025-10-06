@@ -37,12 +37,20 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestión de Productos</h2>
-                    <button class="btn btn-success" onclick="abrirModalProducto()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg me-1" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-                        </svg>
-                        Agregar Producto
-                    </button>
+                    <div>
+                        <button class="btn btn-info me-2" onclick="abrirModalExtra()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg me-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                            </svg>
+                            Agregar Extra
+                        </button>
+                        <button class="btn btn-success" onclick="abrirModalProducto()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg me-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                            </svg>
+                            Agregar Producto
+                        </button>
+                    </div>
                 </div>
 
                 <div id="mensaje-container"></div>
@@ -61,6 +69,30 @@
                                     </tr>
                                 </thead>
                                 <tbody id="productos-tbody">
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Extras -->
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Extras Disponibles</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 35%">Extra</th>
+                                        <th style="width: 25%">Precio</th>
+                                        <th style="width: 15%" class="text-center">Estado</th>
+                                        <th style="width: 25%" class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="extras-tbody">
                                     <!-- Se llena dinámicamente -->
                                 </tbody>
                             </table>
@@ -135,6 +167,49 @@
         </div>
     </div>
 
+    <!-- Modal Extra -->
+    <div class="modal fade" id="modalExtra" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="modalExtraLabel">Agregar Extra</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="form-extra" onsubmit="return guardarExtra(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="extra-id">
+                        <div class="mb-3">
+                            <label for="extra-nombre" class="form-label">Nombre del Extra *</label>
+                            <input type="text" class="form-control" id="extra-nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="extra-descripcion" class="form-label">Descripción *</label>
+                            <textarea class="form-control" id="extra-descripcion" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="extra-precio" class="form-label">Precio *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="extra-precio" min="0" step="100" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="extra-estado" class="form-label">Estado *</label>
+                            <select class="form-select" id="extra-estado" required>
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-info">Guardar Extra</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container text-center small">
             <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
@@ -150,11 +225,174 @@
     <script>
         let productosActuales = [];
         let productoEditando = null;
+        let extrasActuales = [];
+        let extraEditando = null;
         
         // Cargar productos al iniciar
         document.addEventListener('DOMContentLoaded', function() {
+            cargarExtras();
             cargarProductos();
         });
+        
+        // ========================================
+        // FUNCIONES PARA EXTRAS
+        // ========================================
+        
+        // Cargar extras desde localStorage o mock-data.js
+        function cargarExtras() {
+            const extrasGuardados = localStorage.getItem('extrasLaFornace');
+            if (extrasGuardados) {
+                extrasActuales = JSON.parse(extrasGuardados);
+            } else {
+                // Primera vez, cargar desde mock-data.js
+                extrasActuales = [...extras];
+                localStorage.setItem('extrasLaFornace', JSON.stringify(extrasActuales));
+            }
+            
+            renderizarTablaExtras();
+        }
+        
+        // Renderizar tabla de extras
+        function renderizarTablaExtras() {
+            const tbody = document.getElementById('extras-tbody');
+            
+            if (extrasActuales.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            No hay extras registrados. Haz clic en "Agregar Extra" para comenzar.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = extrasActuales.map(extra => {
+                const estadoClase = extra.activo ? 'success' : 'danger';
+                const estadoTexto = extra.activo ? 'Activo' : 'Inactivo';
+                const accionTexto = extra.activo ? 'Desactivar' : 'Activar';
+                const accionClase = extra.activo ? 'btn-warning' : 'btn-success';
+                
+                return `
+                    <tr>
+                        <td>
+                            <strong>${extra.nombre}</strong><br>
+                            <small class="text-muted">${extra.descripcion}</small>
+                        </td>
+                        <td>
+                            <strong>${formatearPrecio(extra.precio)}</strong>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-${estadoClase}">${estadoTexto}</span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary mb-1" onclick="editarExtra(${extra.id})">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil me-1" viewBox="0 0 16 16">
+                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                </svg>
+                                Editar
+                            </button>
+                            <button class="btn btn-sm ${accionClase}" onclick="toggleEstadoExtra(${extra.id})">
+                                ${accionTexto}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Abrir modal para agregar extra
+        function abrirModalExtra() {
+            extraEditando = null;
+            document.getElementById('form-extra').reset();
+            document.getElementById('extra-id').value = '';
+            document.getElementById('modalExtraLabel').textContent = 'Agregar Extra';
+            document.getElementById('extra-estado').value = 'true';
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalExtra'));
+            modal.show();
+        }
+        
+        // Editar extra
+        function editarExtra(id) {
+            extraEditando = extrasActuales.find(e => e.id === id);
+            if (!extraEditando) return;
+            
+            document.getElementById('extra-id').value = extraEditando.id;
+            document.getElementById('extra-nombre').value = extraEditando.nombre;
+            document.getElementById('extra-descripcion').value = extraEditando.descripcion;
+            document.getElementById('extra-precio').value = extraEditando.precio;
+            document.getElementById('extra-estado').value = extraEditando.activo.toString();
+            document.getElementById('modalExtraLabel').textContent = 'Editar Extra';
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalExtra'));
+            modal.show();
+        }
+        
+        // Guardar extra
+        function guardarExtra(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('extra-id').value;
+            const nombre = document.getElementById('extra-nombre').value.trim();
+            const descripcion = document.getElementById('extra-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('extra-precio').value);
+            const activo = document.getElementById('extra-estado').value === 'true';
+            
+            if (id) {
+                // Editar existente
+                const index = extrasActuales.findIndex(e => e.id == id);
+                if (index !== -1) {
+                    extrasActuales[index] = {
+                        ...extrasActuales[index],
+                        nombre,
+                        descripcion,
+                        precio,
+                        activo
+                    };
+                    mostrarExito('Extra actualizado correctamente');
+                }
+            } else {
+                // Crear nuevo
+                const nuevoId = extrasActuales.length > 0 ? Math.max(...extrasActuales.map(e => e.id)) + 1 : 1;
+                const nuevoExtra = {
+                    id: nuevoId,
+                    nombre,
+                    descripcion,
+                    precio,
+                    activo
+                };
+                extrasActuales.push(nuevoExtra);
+                mostrarExito('Extra creado correctamente');
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('extrasLaFornace', JSON.stringify(extrasActuales));
+            
+            // Cerrar modal
+            const modalEl = document.getElementById('modalExtra');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            
+            // Actualizar tabla
+            renderizarTablaExtras();
+            
+            return false;
+        }
+        
+        // Activar/Desactivar extra
+        function toggleEstadoExtra(id) {
+            const index = extrasActuales.findIndex(e => e.id === id);
+            if (index !== -1) {
+                extrasActuales[index].activo = !extrasActuales[index].activo;
+                localStorage.setItem('extrasLaFornace', JSON.stringify(extrasActuales));
+                
+                const estado = extrasActuales[index].activo ? 'activado' : 'desactivado';
+                mostrarExito(`Extra ${estado} correctamente`);
+                
+                renderizarTablaExtras();
+            }
+        }
         
         // Cargar productos desde localStorage o mock-data.js
         function cargarProductos() {

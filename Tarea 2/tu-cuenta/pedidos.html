@@ -303,6 +303,10 @@
                                     <div>
                                         <h6 class="mb-1">${item.nombre}</h6>
                                         <small class="text-muted">Tamaño: ${item.tamaño} | Cantidad: ${item.cantidad}</small>
+                                        ${item.extras && item.extras.length > 0 ? `
+                                            <br>
+                                            <small class="text-muted">Extras: ${item.extras.map(extra => extra.nombre).join(', ')}</small>
+                                        ` : ''}
                                     </div>
                                     <span class="fw-bold">${formatearPrecio(item.precio * item.cantidad)}</span>
                                 </div>

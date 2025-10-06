@@ -43,6 +43,54 @@ const pizzas = [
   ];
   
   // ========================================
+  // EXTRAS - Ingredientes adicionales disponibles
+  // ========================================
+  const extras = [
+    {
+      id: 1,
+      nombre: "Queso Extra",
+      descripcion: "Doble porción de mozzarella",
+      precio: 2000,
+      activo: true
+    },
+    {
+      id: 2,
+      nombre: "Pepperoni Extra",
+      descripcion: "Porción adicional de pepperoni",
+      precio: 3000,
+      activo: true
+    },
+    {
+      id: 3,
+      nombre: "Champiñones Extra",
+      descripcion: "Porción adicional de champiñones",
+      precio: 1500,
+      activo: true
+    },
+    {
+      id: 4,
+      nombre: "Aceitunas Extra",
+      descripcion: "Porción adicional de aceitunas",
+      precio: 1500,
+      activo: true
+    },
+    {
+      id: 5,
+      nombre: "Jamón Extra",
+      descripcion: "Porción adicional de jamón",
+      precio: 2500,
+      activo: true
+    },
+    {
+      id: 6,
+      nombre: "Piña Extra",
+      descripcion: "Porción adicional de piña",
+      precio: 1200,
+      activo: true
+    }
+  ];
+  
+  // ========================================
   // USUARIO - Datos del perfil
   // ========================================
   const usuario = {
@@ -99,19 +147,53 @@ const pizzas = [
     return pizzas.find(p => p.id === id);
   }
   
+  // Obtener extra por ID
+  function obtenerExtra(id) {
+    // Primero intentar obtener desde localStorage
+    const extrasGuardados = localStorage.getItem('extrasLaFornace');
+    if (extrasGuardados) {
+      const extrasLocal = JSON.parse(extrasGuardados);
+      return extrasLocal.find(e => e.id === id);
+    }
+    // Si no hay datos en localStorage, usar los datos por defecto
+    return extras.find(e => e.id === id);
+  }
+  
+  // Obtener extras activos
+  function obtenerExtrasActivos() {
+    // Primero intentar obtener desde localStorage
+    const extrasGuardados = localStorage.getItem('extrasLaFornace');
+    if (extrasGuardados) {
+      const extrasLocal = JSON.parse(extrasGuardados);
+      return extrasLocal.filter(e => e.activo);
+    }
+    // Si no hay datos en localStorage, usar los datos por defecto
+    return extras.filter(e => e.activo);
+  }
+  
   // Agregar al carrito
-  function agregarAlCarrito(pizzaId, tamaño, cantidad = 1) {
+  function agregarAlCarrito(pizzaId, tamaño, cantidad = 1, extrasSeleccionados = []) {
     const pizza = obtenerPizza(pizzaId);
     if (!pizza) return false;
+    
+    // Calcular precio total incluyendo extras
+    const precioBase = pizza.precios[tamaño];
+    const precioExtras = extrasSeleccionados.reduce((total, extraId) => {
+      const extra = obtenerExtra(extraId);
+      return total + (extra ? extra.precio : 0);
+    }, 0);
+    const precioTotal = precioBase + precioExtras;
     
     const item = {
       id: Date.now(),
       pizzaId: pizzaId,
       nombre: pizza.nombre,
       tamaño: tamaño,
-      precio: pizza.precios[tamaño],
+      precio: precioTotal,
+      precioBase: precioBase,
       cantidad: cantidad,
-      imagen: pizza.imagen
+      imagen: pizza.imagen,
+      extras: extrasSeleccionados.map(extraId => obtenerExtra(extraId)).filter(Boolean)
     };
     
     carrito.push(item);

@@ -181,9 +181,14 @@
             
             container.innerHTML = ordenesFiltradas.map(orden => {
                 const estadoInfo = obtenerInfoEstadoCocina(orden.estado);
-                const resumenItems = orden.items.map(item => 
-                    `${item.cantidad}x ${item.nombre} (${item.tamaño})`
-                ).join('<br>');
+                const resumenItems = orden.items.map(item => {
+                    let itemText = `${item.cantidad}x ${item.nombre} (${item.tamaño})`;
+                    if (item.extras && item.extras.length > 0) {
+                        const extrasText = item.extras.map(extra => extra.nombre).join(', ');
+                        itemText += `<br><small class="text-muted">Extras: ${extrasText}</small>`;
+                    }
+                    return itemText;
+                }).join('<br>');
                 
                 return `
                     <div class="card mb-3 shadow-sm border-0 border-start border-${estadoInfo.colorBorder} border-4">
@@ -292,8 +297,15 @@ Hora: ${orden.hora || ''}
 ITEMS DEL PEDIDO:
 ----------------------------------------
 
-${orden.items.map(item => `${item.cantidad}x ${item.nombre} (${item.tamaño})
-    Precio: ${formatearPrecio(item.precio)}`).join('\n\n')}
+${orden.items.map(item => {
+    let itemText = `${item.cantidad}x ${item.nombre} (${item.tamaño})`;
+    if (item.extras && item.extras.length > 0) {
+        const extrasText = item.extras.map(extra => extra.nombre).join(', ');
+        itemText += `\n    Extras: ${extrasText}`;
+    }
+    itemText += `\n    Precio: ${formatearPrecio(item.precio)}`;
+    return itemText;
+}).join('\n\n')}
 
 ----------------------------------------
 DIRECCIÓN DE ENTREGA:

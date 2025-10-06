@@ -154,6 +154,10 @@
               <div>
                 <h6 class="mb-1">${item.nombre}</h6>
                 <small class="text-muted text-capitalize">Tamaño: ${item.tamaño}</small>
+                ${item.extras && item.extras.length > 0 ? `
+                  <br>
+                  <small class="text-muted">Extras: ${item.extras.map(extra => extra.nombre).join(', ')}</small>
+                ` : ''}
                 <br>
                 <small class="text-muted">Cantidad: ${item.cantidad}</small>
               </div>
@@ -212,7 +216,8 @@
             nombre: item.nombre,
             tamaño: item.tamaño,
             cantidad: item.cantidad,
-            precio: item.precio
+            precio: item.precio,
+            extras: item.extras || []
           })),
           total: calcularTotalCarrito() + COSTO_ENVIO,
           direccion: usuario.direccion,
