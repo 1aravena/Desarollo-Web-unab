@@ -1,0 +1,36 @@
+# =========================================
+# Pizzería La Fornace - API Requirements
+# =========================================
+# Instalar con: pip install -r requirements.txt
+# Python 3.11+ requerido
+
+# ========== Framework Web ==========
+fastapi>=0.115.0
+uvicorn>=0.30.0
+starlette>=0.40.0
+
+# ========== Base de Datos ==========
+sqlalchemy>=2.0.0
+aiosqlite>=0.20.0
+greenlet>=3.0.0
+
+# ========== Validación y Configuración ==========
+pydantic>=2.7.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+email-validator>=2.0.0
+
+# ========== Autenticación ==========
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.0
+
+# ========== Envío de Emails ==========
+aiosmtplib>=3.0.0
+
+# ========== Generación de PDFs ==========
+reportlab>=4.0.0
+pillow>=10.0.0
+
+# ========== Utilidades ==========
+python-multipart>=0.0.9
