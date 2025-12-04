@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anular Pedido - La Fornace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-05 Anulación de Compra -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Menú</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tu-cuenta/index.html">Tu Cuenta</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tu-cuenta/pedidos.html">Tus Pedidos</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-primary ms-lg-3" href="../carrito/index.html">
+                            Carrito <span class="badge text-bg-light ms-1" id="carrito-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div id="mensaje-container"></div>
+
+                <!-- Pedido No Encontrado -->
+                <div id="pedido-no-encontrado" class="text-center py-5" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-exclamation-triangle text-warning mb-3" viewBox="0 0 16 16">
+                        <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                        <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                    </svg>
+                    <h4 class="text-muted">Pedido no encontrado</h4>
+                    <p class="text-muted">No pudimos encontrar el pedido que estás buscando.</p>
+                    <a href="../tu-cuenta/pedidos.html" class="btn btn-primary mt-3">Ver Mis Pedidos</a>
+                </div>
+
+                <!-- Contenedor del Pedido -->
+                <div id="pedido-container" style="display: none;">
+                    <h2 class="mb-4">Anular Pedido</h2>
+
+                    <!-- Detalles del Pedido -->
+                    <div class="card mb-4 shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h4 class="mb-1" id="pedido-numero">Pedido #</h4>
+                                    <p class="text-muted mb-0" id="pedido-fecha"></p>
+                                </div>
+                                <span class="badge fs-6" id="pedido-estado-badge"></span>
+                            </div>
+
+                            <hr>
+
+                            <h5 class="mb-3">Items del Pedido</h5>
+                            <div class="list-group mb-3" id="pedido-items">
+                                <!-- Items se llenarán dinámicamente -->
+                            </div>
+
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal:</span>
+                                        <span id="pedido-subtotal"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Costo de Envío:</span>
+                                        <span id="pedido-envio"></span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Total:</strong>
+                                        <strong class="fs-5 text-primary" id="pedido-total"></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de Anulación -->
+                    <div id="formulario-anulacion" style="display: none;">
+                        <div class="card border-danger shadow-sm">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-circle me-2" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                                    </svg>
+                                    ¿Necesitas anular este pedido?
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-3">Por favor, indícanos el motivo de la anulación:</p>
+                                <form id="form-anular" onsubmit="return anularPedido(event)">
+                                    <div class="mb-3">
+                                        <label for="motivo-anulacion" class="form-label">Motivo de anulación:</label>
+                                        <select class="form-select" id="motivo-anulacion" required>
+                                            <option value="">Selecciona un motivo</option>
+                                            <option value="Cambio de planes">Cambio de planes</option>
+                                            <option value="Pedido duplicado">Pedido duplicado</option>
+                                            <option value="Tiempo de espera muy largo">Tiempo de espera muy largo</option>
+                                            <option value="Error en el pedido">Error en el pedido</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3" id="motivo-otro-container" style="display: none;">
+                                        <label for="motivo-otro" class="form-label">Especifica el motivo:</label>
+                                        <textarea class="form-control" id="motivo-otro" rows="2"></textarea>
+                                    </div>
+                                    <div class="alert alert-warning">
+                                        <strong>Nota:</strong> El reembolso será procesado en 3-5 días hábiles y se acreditará en tu método de pago original.
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a href="../tu-cuenta/pedidos.html" class="btn btn-outline-secondary">
+                                            Volver a Mis Pedidos
+                                        </a>
+                                        <button type="submit" class="btn btn-danger">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-1" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                            </svg>
+                                            Confirmar Anulación
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje: No se puede anular -->
+                    <div id="no-se-puede-anular" style="display: none;">
+                        <div class="card border-warning shadow-sm">
+                            <div class="card-header bg-warning">
+                                <h5 class="mb-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle me-2" viewBox="0 0 16 16">
+                                        <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                                        <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                                    </svg>
+                                    No se puede anular este pedido
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p id="razon-no-anular" class="mb-3"></p>
+                                <p class="mb-3">Si tienes algún problema con tu pedido, por favor contacta nuestro servicio al cliente:</p>
+                                <div class="d-flex gap-3 mb-3">
+                                    <div>
+                                        <strong>Teléfono:</strong><br>
+                                        <a href="tel:+56912345678" class="text-decoration-none">+56 9 1234 5678</a>
+                                    </div>
+                                    <div>
+                                        <strong>Email:</strong><br>
+                                        <a href="mailto:contacto@lafornace.cl" class="text-decoration-none">contacto@lafornace.cl</a>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="../tu-cuenta/pedidos.html" class="btn btn-primary">
+                                        Volver a Mis Pedidos
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmación de Anulación -->
+                    <div id="confirmacion-anulacion" style="display: none;">
+                        <div class="card border-success shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                    </svg>
+                                    Pedido Anulado Exitosamente
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-3">Tu pedido ha sido anulado correctamente.</p>
+                                
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Información del Reembolso</h6>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Monto:</span>
+                                            <strong id="reembolso-monto"></strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Estado:</span>
+                                            <span class="badge bg-info">Procesando</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Tiempo estimado:</span>
+                                            <span>3-5 días hábiles</span>
+                                        </div>
+                                        <hr>
+                                        <small class="text-muted">El reembolso se acreditará en tu método de pago original.</small>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="../index.html" class="btn btn-outline-primary">
+                                        Volver al Menú
+                                    </a>
+                                    <a href="../tu-cuenta/pedidos.html" class="btn btn-primary">
+                                        Ver Mis Pedidos
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    
+    <script>
+        let pedidoActual = null;
+
+        // Cargar pedido al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            if (!api.isAuthenticated()) {
+                window.location.href = '../login.html?redirect=pedidos/anular.html' + window.location.search;
+                return;
+            }
+            
+            cargarCarrito();
+            actualizarBadgeCarrito();
+            cargarPedidoDesdeURL();
+        });
+
+        // Mostrar/ocultar campo "Otro motivo"
+        document.getElementById('motivo-anulacion')?.addEventListener('change', function() {
+            const otroContainer = document.getElementById('motivo-otro-container');
+            if (this.value === 'Otro') {
+                otroContainer.style.display = 'block';
+                document.getElementById('motivo-otro').required = true;
+            } else {
+                otroContainer.style.display = 'none';
+                document.getElementById('motivo-otro').required = false;
+            }
+        });
+
+        // Cargar pedido desde URL
+        async function cargarPedidoDesdeURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pedidoId = urlParams.get('pedido');
+            
+            if (!pedidoId) {
+                document.getElementById('pedido-no-encontrado').style.display = 'block';
+                return;
+            }
+            
+            try {
+                // Cargar pedido desde API
+                pedidoActual = await api.get(`/pedidos/${pedidoId}`);
+                
+                // Adaptar estructura si es necesario
+                if (pedidoActual.items_json && pedidoActual.items_json.items) {
+                    pedidoActual.items = pedidoActual.items_json.items;
+                }
+                
+                mostrarDetallesPedido();
+                validarSiSePuedeAnular();
+            } catch (error) {
+                console.error('Error al cargar pedido:', error);
+                document.getElementById('pedido-no-encontrado').style.display = 'block';
+            }
+        }
+
+        // Mostrar detalles del pedido
+        function mostrarDetallesPedido() {
+            document.getElementById('pedido-container').style.display = 'block';
+            
+            // Número y fecha
+            document.getElementById('pedido-numero').textContent = `Pedido #${pedidoActual.id}`;
+            const fecha = new Date(pedidoActual.fecha);
+            document.getElementById('pedido-fecha').textContent = `${fecha.toLocaleDateString()} - ${fecha.toLocaleTimeString()}`;
+            
+            // Estado
+            const estadoInfo = obtenerInfoEstado(pedidoActual.estado);
+            const badge = document.getElementById('pedido-estado-badge');
+            badge.textContent = estadoInfo.texto;
+            badge.className = `badge fs-6 ${estadoInfo.clase}`;
+            
+            // Items
+            const itemsContainer = document.getElementById('pedido-items');
+            itemsContainer.innerHTML = pedidoActual.items.map(item => `
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${item.nombre}</h6>
+                            <small class="text-muted">Cantidad: ${item.cantidad}</small>
+                        </div>
+                        <span class="fw-bold">${formatearPrecio(item.precio_unitario * item.cantidad)}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Totales
+            document.getElementById('pedido-subtotal').textContent = formatearPrecio(pedidoActual.subtotal);
+            document.getElementById('pedido-envio').textContent = formatearPrecio(pedidoActual.costo_envio);
+            document.getElementById('pedido-total').textContent = formatearPrecio(pedidoActual.total);
+        }
+
+        // Validar si se puede anular
+        async function validarSiSePuedeAnular() {
+            try {
+                const resultado = await api.get(`/anulaciones/pedido/${pedidoActual.id}/puede-anular`);
+                
+                if (resultado.puede_anular) {
+                    document.getElementById('formulario-anulacion').style.display = 'block';
+                    
+                    // Mostrar tiempo restante si está disponible
+                    if (resultado.tiempo_restante_minutos) {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-info mb-3';
+                        alertDiv.innerHTML = `<strong>¡Atención!</strong> Tienes ${resultado.tiempo_restante_minutos} minutos para anular este pedido.`;
+                        document.querySelector('#formulario-anulacion .card-body').prepend(alertDiv);
+                    }
+                } else {
+                    document.getElementById('no-se-puede-anular').style.display = 'block';
+                    document.getElementById('razon-no-anular').textContent = resultado.razon || 'No es posible anular este pedido en este momento.';
+                }
+            } catch (error) {
+                console.error('Error al validar anulación:', error);
+                // Fallback a validación local básica si falla la API
+                validarLocalmente();
+            }
+        }
+        
+        function validarLocalmente() {
+            const estadosAnulables = ['pendiente', 'confirmado'];
+            if (estadosAnulables.includes(pedidoActual.estado)) {
+                document.getElementById('formulario-anulacion').style.display = 'block';
+            } else {
+                document.getElementById('no-se-puede-anular').style.display = 'block';
+                document.getElementById('razon-no-anular').textContent = 'El estado del pedido no permite anulación.';
+            }
+        }
+
+        // Anular pedido
+        async function anularPedido(event) {
+            event.preventDefault();
+            
+            const motivoSelect = document.getElementById('motivo-anulacion').value;
+            let motivo = motivoSelect;
+            
+            if (motivoSelect === 'Otro') {
+                const motivoOtro = document.getElementById('motivo-otro').value.trim();
+                if (!motivoOtro) {
+                    mostrarError('Por favor especifica el motivo de anulación');
+                    return false;
+                }
+                motivo = motivoOtro;
+            }
+            
+            if (motivo.length < 10) {
+                mostrarError('El motivo debe tener al menos 10 caracteres');
+                return false;
+            }
+            
+            try {
+                const btnSubmit = event.target.querySelector('button[type="submit"]');
+                const originalText = btnSubmit.innerHTML;
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...';
+                
+                await api.post('/anulaciones', {
+                    pedido_id: pedidoActual.id,
+                    motivo: motivo
+                });
+                
+                // Ocultar formulario y mostrar confirmación
+                document.getElementById('formulario-anulacion').style.display = 'none';
+                document.getElementById('confirmacion-anulacion').style.display = 'block';
+                document.getElementById('reembolso-monto').textContent = formatearPrecio(pedidoActual.total);
+                
+                // Actualizar badge del estado
+                const estadoInfo = obtenerInfoEstado('cancelado');
+                const badge = document.getElementById('pedido-estado-badge');
+                badge.textContent = estadoInfo.texto;
+                badge.className = `badge fs-6 ${estadoInfo.clase}`;
+                
+                mostrarExito('Pedido anulado exitosamente.');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error al anular:', error);
+                mostrarError(error.detail || 'Error al procesar la anulación. Inténtalo nuevamente.');
+                
+                const btnSubmit = event.target.querySelector('button[type="submit"]');
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-1" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                    Confirmar Anulación
+                `;
+            }
+            
+            return false;
+        }
+
+        // Obtener información del estado
+        function obtenerInfoEstado(estado) {
+            const estados = {
+                'pendiente': { texto: 'Pendiente', clase: 'bg-secondary' },
+                'confirmado': { texto: 'Confirmado', clase: 'bg-primary' },
+                'preparando': { texto: 'En Preparación', clase: 'bg-info' },
+                'enviado': { texto: 'En Camino', clase: 'bg-warning text-dark' },
+                'entregado': { texto: 'Entregado', clase: 'bg-success' },
+                'cancelado': { texto: 'Anulado', clase: 'bg-danger' }
+            };
+            return estados[estado] || { texto: estado, clase: 'bg-secondary' };
+        }
+
+        // Formatear fecha
+        function formatearFecha(fechaISO) {
+            const fecha = new Date(fechaISO);
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+            return fecha.toLocaleDateString('es-CL', opciones);
+        }
+    </script>
+</body>
+</html>
+
+

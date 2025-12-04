@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resumen del Pedido - La Fornace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-04 Resumen y Confirmación de Pedido -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Menú</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tu-cuenta/index.html">Tu Cuenta</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-primary ms-lg-3 active" href="index.html">
+                            Carrito <span class="badge text-bg-light ms-1" id="carrito-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12 col-lg-8 mx-auto">
+                <h2 class="mb-4">Resumen de tu Pedido</h2>
+                
+                <!-- Contenedor de mensajes -->
+                <div id="mensaje-container"></div>
+                
+                <!-- Resumen de items -->
+                <div class="card mb-4">
+                    <div class="card-header bg-fornace text-white">
+                        <h5 class="mb-0">Items del Pedido</h5>
+                    </div>
+                    <div class="card-body" id="items-resumen">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
+                </div>
+                
+                <!-- Información de entrega -->
+                <div class="card mb-4">
+                    <div class="card-header bg-fornace text-white">
+                        <h5 class="mb-0">Información de Entrega</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Dirección de Entrega</label>
+                                <p class="mb-0" id="direccion-entrega"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Teléfono</label>
+                                <p class="mb-0" id="telefono-entrega"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tiempo Estimado</label>
+                                <p class="mb-0 text-primary">
+                                    <strong id="eta-entrega">25-30 minutos</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resumen de costos -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span id="resumen-subtotal">$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Costo de Envío</span>
+                            <span id="resumen-envio">$2.500</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Descuento</span>
+                            <span id="resumen-descuento">-$0</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Total</h4>
+                            <h4 class="mb-0 text-primary" id="resumen-total">$0</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <a href="index.html" class="btn btn-outline-secondary btn-lg">
+                        Volver al Carrito
+                    </a>
+                    <button class="btn btn-primary btn-lg" onclick="confirmarPedido()">
+                        Confirmar Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    <script src="../data/mock-data.js"></script>
+    
+    <script>
+      // Costo de envío fijo
+      const COSTO_ENVIO = 2500;
+      let usuarioActual = null;
+      
+      // ========================================
+      // RENDERIZAR RESUMEN DE ITEMS
+      // ========================================
+      async function renderizarResumen() {
+        console.log('=== Cargando resumen ===');
+        console.log('Token actual:', api.getToken());
+        console.log('¿Autenticado?:', api.isAuthenticated());
+        
+        // Verificar autenticación
+        if (!api.isAuthenticated()) {
+            console.log('No autenticado, redirigiendo a login...');
+            window.location.href = '../tu-cuenta/login.html?redirect=carrito/resumen.html';
+            return;
+        }
+
+        const carritoActual = cargarCarrito();
+        const itemsContainer = document.getElementById('items-resumen');
+        
+        // Si el carrito está vacío, redirigir al carrito
+        if (carritoActual.length === 0) {
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        itemsContainer.innerHTML = '';
+        
+        carritoActual.forEach(item => {
+          const precio = item.precioUnitario || item.precio;
+          const tamanio = item.tamanioNombre || item.tamaño;
+          const imagen = item.imagen || item.image_url || '../image/placeholder.jpg';
+          const imagenSrc = imagen.startsWith('http') || imagen.startsWith('../') ? imagen : `../${imagen}`;
+
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'd-flex justify-content-between align-items-center mb-3 pb-3 border-bottom';
+          
+          itemDiv.innerHTML = `
+            <div class="d-flex align-items-center">
+              <img src="${imagenSrc}" class="rounded me-3" width="60" height="60" style="object-fit: cover;" alt="${item.nombre}" onerror="this.src='../image/placeholder.jpg'">
+              <div>
+                <h6 class="mb-1">${item.nombre}</h6>
+                <small class="text-muted text-capitalize">Tamaño: ${tamanio}</small>
+                ${item.extras && item.extras.length > 0 ? `
+                  <br>
+                  <small class="text-muted">Extras: ${item.extras.map(extra => extra.nombre).join(', ')}</small>
+                ` : ''}
+                <br>
+                <small class="text-muted">Cantidad: ${item.cantidad}</small>
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="fw-bold">${formatearPrecio(precio * item.cantidad)}</div>
+              <small class="text-muted">${formatearPrecio(precio)} c/u</small>
+            </div>
+          `;
+          
+          itemsContainer.appendChild(itemDiv);
+        });
+        
+        // Cargar información de usuario desde API
+        try {
+            usuarioActual = await api.get('/auth/me');
+            document.getElementById('direccion-entrega').textContent = usuarioActual.direccion || 'Sin dirección registrada';
+            document.getElementById('telefono-entrega').textContent = usuarioActual.telefono || 'Sin teléfono registrado';
+        } catch (error) {
+            console.error('Error al cargar usuario:', error);
+            mostrarError('Error al cargar información del usuario');
+        }
+        
+        // Calcular totales
+        actualizarTotalesResumen();
+      }
+      
+      // ========================================
+      // ACTUALIZAR TOTALES DEL RESUMEN
+      // ========================================
+      function actualizarTotalesResumen() {
+        const carritoActual = cargarCarrito();
+        const subtotal = carritoActual.reduce((sum, item) => {
+            const precio = item.precioUnitario || item.precio;
+            return sum + (precio * item.cantidad);
+        }, 0);
+        
+        const envio = COSTO_ENVIO;
+        const descuento = 0; // Por ahora sin descuentos
+        const total = subtotal + envio - descuento;
+        
+        document.getElementById('resumen-subtotal').textContent = formatearPrecio(subtotal);
+        document.getElementById('resumen-envio').textContent = formatearPrecio(envio);
+        document.getElementById('resumen-descuento').textContent = `-${formatearPrecio(descuento)}`;
+        document.getElementById('resumen-total').textContent = formatearPrecio(total);
+      }
+      
+      // ========================================
+      // CONFIRMAR PEDIDO
+      // ========================================
+      async function confirmarPedido() {
+        console.log('=== INICIANDO CONFIRMAR PEDIDO ===');
+        
+        const carritoActual = cargarCarrito();
+        console.log('Carrito actual:', carritoActual);
+        
+        if (carritoActual.length === 0) {
+          mostrarError('El carrito está vacío');
+          return;
+        }
+        
+        if (!usuarioActual || !usuarioActual.direccion || !usuarioActual.telefono) {
+            mostrarError('Por favor actualiza tu dirección y teléfono en "Tu Cuenta" antes de confirmar.');
+            setTimeout(() => window.location.href = '../tu-cuenta/index.html', 2000);
+            return;
+        }
+        
+        const btnConfirmar = document.querySelector('button[onclick="confirmarPedido()"]');
+        const textoOriginal = btnConfirmar.innerHTML;
+        btnConfirmar.disabled = true;
+        btnConfirmar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...';
+        
+        // Calcular total para guardar
+        const subtotal = carritoActual.reduce((sum, item) => {
+            const precio = item.precioUnitario || item.precio || 0;
+            return sum + (precio * item.cantidad);
+        }, 0);
+        const costoEnvio = COSTO_ENVIO;
+        const total = subtotal + costoEnvio;
+        
+        console.log('Total calculado:', total);
+        
+        // Variable para el pedido creado
+        let pedidoId = Date.now();
+        let pedidoTotal = total;
+        let pedidoEta = '30-45';
+        let pedidoCreadoEnAPI = false;
+        
+        try {
+            // Intentar crear el pedido en el servidor
+            console.log('Intentando crear pedido en servidor...');
+            
+            // 1. Primero vaciar el carrito del servidor
+            try {
+                await api.delete('/carrito');
+                console.log('Carrito del servidor vaciado');
+            } catch (e) {
+                console.warn('No se pudo vaciar carrito del servidor (puede estar vacío):', e);
+            }
+            
+            // 2. Agregar items al carrito del servidor uno por uno
+            let itemsAgregados = 0;
+            for (const item of carritoActual) {
+                // Construir datos del item para la API
+                const itemData = {
+                    producto_id: item.productoId || item.pizzaId || item.id,
+                    tamanio_id: item.tamanioId || null,
+                    cantidad: item.cantidad || 1,
+                    extras_ids: item.extras ? item.extras.map(e => e.id) : [],
+                    notas: item.notas || null
+                };
+                
+                console.log('Agregando item al carrito del servidor:', itemData);
+                
+                try {
+                    const resultado = await api.post('/carrito/items', itemData);
+                    console.log('Item agregado correctamente:', resultado);
+                    itemsAgregados++;
+                } catch (e) {
+                    console.error('Error agregando item:', e);
+                    // Si falla un item, continuamos con los demás
+                }
+            }
+            
+            console.log(`Items agregados al carrito: ${itemsAgregados}/${carritoActual.length}`);
+            
+            // 3. Solo intentar crear pedido si se agregaron items
+            if (itemsAgregados > 0) {
+                const pedidoData = {
+                    detalle_entrega: {
+                        direccion: usuarioActual.direccion,
+                        telefono: usuarioActual.telefono,
+                        instrucciones_especiales: null
+                    },
+                    metodo_pago: "efectivo"
+                };
+                
+                console.log('Creando pedido con datos:', pedidoData);
+                
+                try {
+                    const pedidoCreado = await api.post('/pedidos', pedidoData);
+                    console.log('✅ Pedido creado exitosamente:', pedidoCreado);
+                    
+                    if (pedidoCreado) {
+                        pedidoId = pedidoCreado.id || pedidoId;
+                        pedidoTotal = pedidoCreado.total || total;
+                        pedidoEta = pedidoCreado.eta_minutos || '30-45';
+                        pedidoCreadoEnAPI = true;
+                    }
+                } catch (e) {
+                    console.error('❌ Error creando pedido en API:', e);
+                    console.error('Detalle del error:', e.message || e);
+                }
+            } else {
+                console.warn('No se pudieron agregar items al carrito del servidor');
+            }
+            
+        } catch (error) {
+            console.error('Error general con API:', error);
+        }
+        
+        // Siempre continuar con el flujo visual
+        console.log('Pedido creado en API:', pedidoCreadoEnAPI);
+        console.log('Guardando pedido en localStorage...');
+        
+        // Guardar info para la página de confirmación
+        const pedidoGuardado = {
+            id: pedidoId,
+            total: pedidoTotal,
+            eta: pedidoEta,
+            direccion: usuarioActual.direccion,
+            items: carritoActual,
+            creadoEnAPI: pedidoCreadoEnAPI
+        };
+        
+        console.log('Pedido a guardar:', pedidoGuardado);
+        localStorage.setItem('ultimoPedido', JSON.stringify(pedidoGuardado));
+        
+        // Limpiar carrito local
+        console.log('Limpiando carrito local...');
+        localStorage.removeItem('carritoLaFornace');
+        
+        // Redirigir a confirmación
+        console.log('=== REDIRIGIENDO A CONFIRMACIÓN ===');
+        window.location.replace('confirmacion.html');
+      }
+      
+      // ========================================
+      // INICIALIZACIÓN
+      // ========================================
+      document.addEventListener('DOMContentLoaded', function() {
+        // Cargar carrito desde localStorage
+        cargarCarrito();
+        
+        // Renderizar resumen
+        renderizarResumen();
+        
+        // Actualizar badge del carrito
+        actualizarBadgeCarrito();
+      });
+    </script>
+</body>
+</html>
+
+

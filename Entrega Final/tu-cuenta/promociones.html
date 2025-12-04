@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preferencias de Email - La Fornace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-13 Suscripción a Promociones por Email -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Menú</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Tu Cuenta</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pedidos.html">Tus Pedidos</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-primary ms-lg-3" href="../carrito/index.html">
+                            Carrito <span class="badge text-bg-light ms-1" id="carrito-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <h2 class="mb-4"><i class="bi bi-envelope-heart me-2"></i>Preferencias de Email</h2>
+                
+                <div id="mensaje-container"></div>
+
+                <!-- Estado de carga -->
+                <div id="cargando" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Cargando preferencias...</p>
+                </div>
+
+                <!-- Contenido principal (oculto hasta cargar) -->
+                <div id="contenido-preferencias" style="display: none;">
+                    <!-- Suscripción a Promociones -->
+                    <div class="card mb-4 shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-2">
+                                        <i class="bi bi-envelope-paper text-primary me-2"></i>
+                                        Promociones y Ofertas por Email
+                                    </h5>
+                                    <p class="text-muted mb-0">Recibe ofertas especiales, descuentos exclusivos y novedades directamente en tu correo</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="email-promo" style="width: 3rem; height: 1.5rem;">
+                                    <label class="form-check-label visually-hidden" for="email-promo">Activar promociones por email</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info de confirmaciones (siempre activo) -->
+                    <div class="card mb-4 shadow-sm border-0 bg-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-info-circle text-info fs-4 me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Emails de confirmación de pedido</h6>
+                                    <p class="text-muted mb-0 small">
+                                        Siempre recibirás emails de confirmación y seguimiento de tus pedidos.
+                                        Estos emails transaccionales no pueden desactivarse.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Beneficios de suscribirse -->
+                    <div class="card mb-4 shadow-sm border-0" id="seccion-beneficios">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="bi bi-gift text-warning me-2"></i>
+                                Beneficios de Suscribirte
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-percent text-success me-2"></i>
+                                        <span>Descuentos exclusivos hasta 30%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-lightning text-warning me-2"></i>
+                                        <span>Acceso anticipado a ofertas flash</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-stars text-info me-2"></i>
+                                        <span>Degustaciones gratis en lanzamientos</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-bell text-primary me-2"></i>
+                                        <span>Notificaciones de nuevos productos</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado actual -->
+                    <div class="card mb-4 shadow-sm border-0" id="estado-suscripcion">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div id="estado-icono" class="me-3"></div>
+                                <div>
+                                    <h6 class="mb-0" id="estado-titulo">-</h6>
+                                    <small class="text-muted" id="estado-descripcion">-</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="index.html" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>
+                            Volver a Mi Cuenta
+                        </a>
+                        <button type="button" class="btn btn-primary" onclick="guardarPreferencias()" id="btn-guardar">
+                            <i class="bi bi-check-lg me-1"></i>
+                            Guardar Preferencias
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    
+    <script>
+        let preferenciasOriginales = null;
+
+        // Verificar autenticación y cargar preferencias al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = 'login.html?redirect=tu-cuenta/promociones.html';
+                return;
+            }
+            
+            cargarPreferenciasPromos();
+            
+            // Actualizar estado visual cuando cambia el switch
+            document.getElementById('email-promo').addEventListener('change', actualizarEstadoVisual);
+        });
+
+        // Cargar preferencias desde la API
+        async function cargarPreferenciasPromos() {
+            try {
+                const preferencias = await api.get('/campanias/preferencias');
+                preferenciasOriginales = preferencias;
+                
+                // Actualizar UI
+                document.getElementById('email-promo').checked = preferencias.email_opt_in || false;
+                
+                // Actualizar estado visual
+                actualizarEstadoVisual();
+                
+                // Mostrar contenido
+                document.getElementById('cargando').style.display = 'none';
+                document.getElementById('contenido-preferencias').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error cargando preferencias:', error);
+                document.getElementById('cargando').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Error al cargar preferencias. 
+                        <a href="#" onclick="location.reload()">Reintentar</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Actualizar visualización del estado
+        function actualizarEstadoVisual() {
+            const suscrito = document.getElementById('email-promo').checked;
+            const iconoDiv = document.getElementById('estado-icono');
+            const titulo = document.getElementById('estado-titulo');
+            const descripcion = document.getElementById('estado-descripcion');
+            const cardEstado = document.getElementById('estado-suscripcion');
+            
+            if (suscrito) {
+                iconoDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success fs-1"></i>';
+                titulo.textContent = 'Estás suscrito a promociones';
+                descripcion.textContent = 'Recibirás ofertas especiales en tu correo electrónico';
+                cardEstado.classList.remove('border-warning');
+                cardEstado.classList.add('border-success');
+            } else {
+                iconoDiv.innerHTML = '<i class="bi bi-x-circle-fill text-warning fs-1"></i>';
+                titulo.textContent = 'No estás suscrito';
+                descripcion.textContent = 'No recibirás emails promocionales (solo confirmaciones de pedido)';
+                cardEstado.classList.remove('border-success');
+                cardEstado.classList.add('border-warning');
+            }
+        }
+
+        // Guardar preferencias en la API
+        async function guardarPreferencias() {
+            const btnGuardar = document.getElementById('btn-guardar');
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+            
+            const emailPromo = document.getElementById('email-promo').checked;
+            
+            try {
+                await api.put('/campanias/preferencias', {
+                    email_opt_in: emailPromo
+                });
+                
+                preferenciasOriginales = { email_opt_in: emailPromo };
+                
+                // Mostrar mensaje de éxito
+                const mensaje = emailPromo 
+                    ? '<i class="bi bi-check-circle me-2"></i>¡Suscripción activada! Recibirás promociones exclusivas por email'
+                    : '<i class="bi bi-check-circle me-2"></i>Preferencias guardadas. No recibirás más emails promocionales';
+                
+                mostrarExito(mensaje);
+                
+                // Scroll al inicio
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error guardando preferencias:', error);
+                mostrarError('Error al guardar preferencias: ' + (error.message || 'Intenta de nuevo'));
+            } finally {
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = '<i class="bi bi-check-lg me-1"></i>Guardar Preferencias';
+            }
+        }
+    </script>
+</body>
+</html>

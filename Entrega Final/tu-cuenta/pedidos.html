@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Historial de Pedidos - La Fornace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-02 Historial de Pedidos -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Menú</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Tu Cuenta</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="pedidos.html">Tus Pedidos</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-primary ms-lg-3" href="../carrito/index.html">
+                            Carrito <span class="badge text-bg-light ms-1" id="carrito-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">Mi Historial de Pedidos</h2>
+                
+                <div id="mensaje-container"></div>
+
+                <!-- Filtros -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-body bg-light">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-md-3">
+                                <label for="filtroEstado" class="form-label fw-semibold">Estado:</label>
+                                <select class="form-select" id="filtroEstado" onchange="aplicarFiltros()">
+                                    <option value="todos">Todos</option>
+                                    <option value="confirmado">Confirmado</option>
+                                    <option value="en_preparacion">En Preparación</option>
+                                    <option value="en_camino">En Camino</option>
+                                    <option value="entregado">Entregado</option>
+                                    <option value="anulado">Anulado</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <label for="filtroFecha" class="form-label fw-semibold">Fecha:</label>
+                                <select class="form-select" id="filtroFecha" onchange="aplicarFiltros()">
+                                    <option value="30">Últimos 30 días</option>
+                                    <option value="7">Últimos 7 días</option>
+                                    <option value="90">Últimos 3 meses</option>
+                                    <option value="365">Último año</option>
+                                    <option value="todos">Todos</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel me-1" viewBox="0 0 16 16">
+                                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                                    </svg>
+                                    Aplicar Filtros
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <button class="btn btn-outline-secondary w-100" onclick="limpiarFiltros()">
+                                    Limpiar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Pedidos -->
+                <div id="pedidos-container">
+                    <!-- Se llenará dinámicamente con JavaScript -->
+                </div>
+
+                <!-- Estado Vacío -->
+                <div id="pedidos-vacios" class="text-center py-5" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-inbox text-muted mb-3" viewBox="0 0 16 16">
+                        <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm9.954 5H10.45a2.5 2.5 0 0 1-4.9 0H1.066l.32 2.562a.5.5 0 0 0 .497.438h12.234a.5.5 0 0 0 .496-.438L14.933 9zM3.809 3.563A1.5 1.5 0 0 1 4.981 3h6.038a1.5 1.5 0 0 1 1.172.563l3.7 4.625a.5.5 0 0 1 .105.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
+                    </svg>
+                    <h4 class="text-muted">No tienes pedidos</h4>
+                    <p class="text-muted">Cuando realices tu primer pedido, aparecerá aquí.</p>
+                    <a href="../index.html" class="btn btn-primary mt-3">Ver Menú</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Detalle del Pedido -->
+    <div class="modal fade" id="modalDetallePedido" tabindex="-1" aria-labelledby="modalDetallePedidoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-fornace text-white">
+                    <h5 class="modal-title" id="modalDetallePedidoLabel">Detalle del Pedido</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modal-detalle-contenido">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    <script src="../data/mock-data.js"></script>
+    
+    <script>
+        let todosPedidos = [];
+        let pedidosFiltrados = [];
+
+        // Cargar pedidos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            if (!api.isAuthenticated()) {
+                window.location.href = 'login.html?redirect=tu-cuenta/pedidos.html';
+                return;
+            }
+            
+            cargarCarrito();
+            actualizarBadgeCarrito();
+            cargarPedidos();
+        });
+
+        // Cargar pedidos desde API
+        async function cargarPedidos() {
+            const container = document.getElementById('pedidos-container');
+            const vacioDiv = document.getElementById('pedidos-vacios');
+            
+            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+            
+            try {
+                const response = await api.get('/pedidos');
+                console.log('Respuesta de pedidos:', response);
+                
+                // La API puede devolver { items: [...] } o directamente un array
+                const pedidos = Array.isArray(response) ? response : (response.items || response.data || []);
+                
+                // Adaptar estructura de API a la que espera la UI
+                todosPedidos = pedidos.map(p => {
+                    // Parsear items_json si es string o objeto
+                    let items = [];
+                    if (p.items_json) {
+                        if (typeof p.items_json === 'string') {
+                            try {
+                                const parsed = JSON.parse(p.items_json);
+                                items = parsed.items || parsed || [];
+                            } catch (e) {
+                                console.error('Error parsing items_json:', e);
+                            }
+                        } else if (Array.isArray(p.items_json)) {
+                            items = p.items_json;
+                        } else if (p.items_json.items) {
+                            items = p.items_json.items;
+                        } else {
+                            // Es un objeto pero no tiene .items, quizás es un solo item
+                            items = [p.items_json];
+                        }
+                    }
+                    
+                    return {
+                        ...p,
+                        items: items,
+                        hora: new Date(p.fecha).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }),
+                        eta: p.eta_minutos ? `${p.eta_minutos} min` : null
+                    };
+                });
+                
+                console.log('Pedidos procesados:', todosPedidos);
+                
+                pedidosFiltrados = [...todosPedidos];
+                renderizarPedidos();
+                
+                if (todosPedidos.length > 0) {
+                    mostrarInfo(`Historial cargado - ${todosPedidos.length} pedido${todosPedidos.length !== 1 ? 's' : ''} encontrado${todosPedidos.length !== 1 ? 's' : ''}`);
+                } else {
+                    container.style.display = 'none';
+                    vacioDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error al cargar pedidos:', error);
+                container.innerHTML = '<div class="alert alert-warning">No se pudieron cargar los pedidos. <button class="btn btn-sm btn-primary ms-2" onclick="cargarPedidos()">Reintentar</button></div>';
+            }
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const estado = document.getElementById('filtroEstado').value;
+            const dias = document.getElementById('filtroFecha').value;
+            
+            pedidosFiltrados = [...todosPedidos];
+            
+            // Filtrar por estado
+            if (estado !== 'todos') {
+                pedidosFiltrados = pedidosFiltrados.filter(p => p.estado === estado);
+            }
+            
+            // Filtrar por fecha
+            if (dias !== 'todos') {
+                const fechaLimite = new Date();
+                fechaLimite.setDate(fechaLimite.getDate() - parseInt(dias));
+                
+                pedidosFiltrados = pedidosFiltrados.filter(p => {
+                    const fechaPedido = new Date(p.fecha);
+                    return fechaPedido >= fechaLimite;
+                });
+            }
+            
+            renderizarPedidos();
+            mostrarInfo(`Filtros aplicados - ${pedidosFiltrados.length} pedido${pedidosFiltrados.length !== 1 ? 's' : ''} encontrado${pedidosFiltrados.length !== 1 ? 's' : ''}`);
+        }
+
+        // Limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('filtroEstado').value = 'todos';
+            document.getElementById('filtroFecha').value = '30';
+            pedidosFiltrados = [...todosPedidos];
+            renderizarPedidos();
+            mostrarInfo('Filtros limpiados');
+        }
+
+        // Renderizar pedidos
+        function renderizarPedidos() {
+            const container = document.getElementById('pedidos-container');
+            const vacioDiv = document.getElementById('pedidos-vacios');
+            
+            if (pedidosFiltrados.length === 0) {
+                if (todosPedidos.length > 0) {
+                    // Hay pedidos pero el filtro los ocultó
+                    container.innerHTML = '<div class="alert alert-info text-center">No se encontraron pedidos con los filtros seleccionados</div>';
+                    container.style.display = 'block';
+                    vacioDiv.style.display = 'none';
+                } else {
+                    // No hay pedidos en absoluto
+                    container.style.display = 'none';
+                    vacioDiv.style.display = 'block';
+                }
+                return;
+            }
+            
+            container.style.display = 'block';
+            vacioDiv.style.display = 'none';
+            
+            container.innerHTML = pedidosFiltrados.map(pedido => {
+                const estadoInfo = obtenerInfoEstado(pedido.estado);
+                
+                // Resumen de items
+                let resumenItems = '';
+                let itemsRestantes = '';
+                
+                if (pedido.items && pedido.items.length > 0) {
+                    resumenItems = pedido.items.slice(0, 2).map(item => {
+                        const cantidad = item.cantidad || 1;
+                        let texto = `${item.nombre}`;
+                        if (item.tamanio && item.tamanio.nombre) {
+                            texto += ` (${item.tamanio.nombre})`;
+                        }
+                        if (cantidad > 1) {
+                            texto += ` x${cantidad}`;
+                        }
+                        return texto;
+                    }).join(', ');
+                    itemsRestantes = pedido.items.length > 2 ? ` +${pedido.items.length - 2} más` : '';
+                } else {
+                    resumenItems = 'Pedido sin detalles';
+                }
+                
+                return `
+                    <div class="card mb-3 shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="mb-0">Pedido #${pedido.id}</h5>
+                                        <span class="badge ${estadoInfo.clase} fs-6">${estadoInfo.texto}</span>
+                                    </div>
+                                    <p class="text-muted mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-calendar-event me-1" viewBox="0 0 16 16">
+                                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                        </svg>
+                                        ${formatearFecha(pedido.fecha)} - ${pedido.hora || ''}
+                                    </p>
+                                    <p class="mb-2">${resumenItems}${itemsRestantes}</p>
+                                    <p class="mb-0"><strong>Total: ${formatearPrecio(pedido.total)}</strong></p>
+                                </div>
+                                <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+                                    <button class="btn btn-outline-primary btn-sm mb-2 w-100 w-md-auto" onclick="verDetallePedido(${pedido.id})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye me-1" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                        </svg>
+                                        Ver Detalle
+                                    </button>
+                                    ${(pedido.estado === 'pendiente' || pedido.estado === 'confirmado') ? `
+                                        <button onclick="anularPedido(${pedido.id})" class="btn btn-outline-danger btn-sm w-100 w-md-auto">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-1" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                            </svg>
+                                            Anular Pedido
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Obtener información del estado
+        function obtenerInfoEstado(estado) {
+            const estados = {
+                'pendiente': { texto: 'Pendiente', clase: 'bg-secondary' },
+                'confirmado': { texto: 'Confirmado', clase: 'bg-primary' },
+                'en_preparacion': { texto: 'En Preparación', clase: 'bg-info' },
+                'en_camino': { texto: 'En Camino', clase: 'bg-warning text-dark' },
+                'entregado': { texto: 'Entregado', clase: 'bg-success' },
+                'anulado': { texto: 'Anulado', clase: 'bg-danger' }
+            };
+            return estados[estado] || { texto: estado, clase: 'bg-secondary' };
+        }
+
+        // Formatear fecha
+        function formatearFecha(fechaISO) {
+            const fecha = new Date(fechaISO);
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+            return fecha.toLocaleDateString('es-CL', opciones);
+        }
+
+        // Ver detalle del pedido
+        function verDetallePedido(pedidoId) {
+            const pedido = todosPedidos.find(p => p.id === pedidoId);
+            if (!pedido) return;
+            
+            const estadoInfo = obtenerInfoEstado(pedido.estado);
+            const modal = new bootstrap.Modal(document.getElementById('modalDetallePedido'));
+            const contenido = document.getElementById('modal-detalle-contenido');
+            
+            // Renderizar items si existen
+            let itemsHtml = '';
+            if (pedido.items && pedido.items.length > 0) {
+                itemsHtml = pedido.items.map(item => {
+                    const precioUnitario = item.precio_unitario || item.precioUnitario || item.precio || 0;
+                    const cantidad = item.cantidad || 1;
+                    
+                    // Construir info del tamaño
+                    let tamanioHtml = '';
+                    if (item.tamanio && item.tamanio.nombre) {
+                        tamanioHtml = `<span class="badge bg-secondary ms-2">${item.tamanio.nombre}</span>`;
+                    }
+                    
+                    // Construir info de extras
+                    let extrasHtml = '';
+                    if (item.extras && item.extras.length > 0) {
+                        const extrasTexto = item.extras.map(e => e.nombre).join(', ');
+                        extrasHtml = `<br><small class="text-success">+ ${extrasTexto}</small>`;
+                    }
+                    
+                    return `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${item.nombre}${tamanioHtml}</h6>
+                                    <small class="text-muted">Cantidad: ${cantidad}</small>
+                                    ${extrasHtml}
+                                    ${item.notas ? `<br><small class="text-muted">Notas: ${item.notas}</small>` : ''}
+                                </div>
+                                <span class="fw-bold">${formatearPrecio(precioUnitario * cantidad)}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                itemsHtml = '<div class="list-group-item text-muted">Sin detalles de items</div>';
+            }
+            
+            contenido.innerHTML = `
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="mb-1">Pedido #${pedido.id}</h4>
+                            <p class="text-muted mb-0">${formatearFecha(pedido.fecha)} - ${pedido.hora || ''}</p>
+                        </div>
+                        <span class="badge ${estadoInfo.clase} fs-6">${estadoInfo.texto}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">Items del Pedido</h5>
+                    <div class="list-group mb-4">
+                        ${itemsHtml}
+                    </div>
+                    
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-geo-alt me-2" viewBox="0 0 16 16">
+                                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                </svg>
+                                Dirección de Entrega
+                            </h5>
+                            <p class="mb-0">${pedido.direccion || 'No especificada'}</p>
+                            ${pedido.eta ? `<p class="mb-0 mt-2"><small class="text-muted">Tiempo estimado: ${pedido.eta}</small></p>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>${formatearPrecio(pedido.subtotal || 0)}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Costo de Envío:</span>
+                        <span>${formatearPrecio(pedido.costo_envio || 0)}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong class="fs-5 text-primary">${formatearPrecio(pedido.total)}</strong>
+                    </div>
+                </div>
+            `;
+            
+            modal.show();
+        }
+        
+        // Anular pedido (Redirigir a página de anulación o modal)
+        function anularPedido(pedidoId) {
+            // Podríamos abrir un modal aquí, pero por ahora redirigimos a una página si existe,
+            // o usamos un prompt simple para el motivo.
+            // La historia B-05 requiere motivo.
+            
+            const motivo = prompt("Por favor ingresa el motivo de la anulación (mínimo 10 caracteres):");
+            if (motivo) {
+                if (motivo.length < 10) {
+                    alert("El motivo debe tener al menos 10 caracteres.");
+                    return;
+                }
+                
+                api.post('/anulaciones', {
+                    pedido_id: pedidoId,
+                    motivo: motivo
+                }).then(() => {
+                    mostrarExito("Solicitud de anulación enviada correctamente");
+                    cargarPedidos(); // Recargar lista
+                }).catch(err => {
+                    console.error(err);
+                    mostrarError("Error al solicitar anulación: " + (err.detail || err.message));
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+
+

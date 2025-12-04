@@ -1,0 +1,71 @@
+/**
+ * ============================================================================
+ * Estilos Personalizados - Pizzeria La Fornace
+ * ============================================================================
+ * 
+ * Este archivo define la identidad visual de la aplicacion, extendiendo
+ * Bootstrap 5 con los colores y estilos de la marca.
+ * 
+ * Paleta de Colores:
+ * ------------------
+ * - Brown (#5b2a1e)  : Horno de ladrillo, navbar y elementos principales
+ * - Red (#7a2e1f)    : Tipografia del logo, titulos de cards
+ * - Orange (#e5702a) : Flama, botones primarios, acentos
+ * - Cream (#f3e6d6)  : Fondo papel, backgrounds suaves
+ * 
+ * Componentes Personalizados:
+ * ---------------------------
+ * - .bg-cream     : Fondo color crema para el body
+ * - .bg-fornace   : Fondo marron para navbar/footer
+ * - .btn-primary  : Botones naranjas de la marca
+ * - .card-title   : Titulos de productos en rojo
+ * 
+ * Dependencias:
+ * -------------
+ * - Bootstrap 5.3.3 (CDN)
+ * 
+ * ============================================================================
+ */
+
+/* ========================================
+   VARIABLES CSS (Design Tokens)
+   ======================================== */
+:root{
+  --fornace-brown:#5b2a1e; /* horno ladrillo oscuro */
+  --fornace-red:#7a2e1f;   /* tipografia logo */
+  --fornace-orange:#e5702a;/* flama */
+  --fornace-cream:#f3e6d6; /* fondo papel */
+}
+
+/* ========================================
+   FONDOS DE MARCA
+   ======================================== */
+.bg-cream{background-color:var(--fornace-cream);} 
+.bg-fornace{background-color:var(--fornace-brown);} 
+
+/* ========================================
+   BOTONES PERSONALIZADOS
+   ======================================== */
+.btn-primary{
+  background-color:var(--fornace-orange);
+  border-color:var(--fornace-orange);
+}
+.btn-primary:hover{background-color:#cf5f1f;border-color:#cf5f1f}
+
+/* ========================================
+   CAROUSEL (Hero Section)
+   ======================================== */
+.carousel-caption h5,
+.carousel-caption p{ text-shadow:0 2px 8px rgba(0,0,0,.6); }
+
+/* ========================================
+   CARDS DE PRODUCTOS
+   ======================================== */
+.card-title{ color:var(--fornace-red); }
+
+/* ========================================
+   FOOTER
+   ======================================== */
+footer{ border-top:4px solid var(--fornace-orange); }
+
+

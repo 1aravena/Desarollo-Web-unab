@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Notificaciones por Email - La Fornace Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-14 Envío Masivo de Notificaciones Segmentadas (Solo Email) -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace Admin</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cocina.html">Cocina</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reportes.html">Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ranking.html">Ranking</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="notificaciones.html">Notificaciones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Volver a la Tienda</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0"><i class="bi bi-envelope-paper me-2"></i>Campañas de Email</h2>
+                    <span class="badge bg-primary fs-6"><i class="bi bi-envelope me-1"></i>Solo Correo Electrónico</span>
+                </div>
+                
+                <div id="mensaje-container"></div>
+
+                <!-- Tabs para navegar entre crear y ver historial -->
+                <ul class="nav nav-tabs mb-4" id="campaniasTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="nueva-tab" data-bs-toggle="tab" data-bs-target="#nueva-campania" type="button">
+                            <i class="bi bi-plus-circle me-1"></i>Nueva Campaña
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="historial-tab" data-bs-toggle="tab" data-bs-target="#historial-campanias" type="button">
+                            <i class="bi bi-clock-history me-1"></i>Historial de Campañas
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="campaniasTabContent">
+                    <!-- Tab: Nueva Campaña -->
+                    <div class="tab-pane fade show active" id="nueva-campania" role="tabpanel">
+                        <!-- Contenido de la Campaña -->
+                        <div class="card mb-4 shadow-sm border-0">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Contenido del Email</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="asunto-campana" class="form-label">Asunto del Email</label>
+                                    <input type="text" class="form-control" id="asunto-campana" placeholder="Ej: 🍕 Oferta Especial de Fin de Semana">
+                                    <div class="form-text">El asunto aparecerá en la bandeja de entrada del cliente.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mensaje-campana" class="form-label">Mensaje</label>
+                                    <textarea class="form-control" id="mensaje-campana" rows="4" placeholder="Escribe el contenido de la promoción..."></textarea>
+                                    <div class="form-text">Este mensaje se mostrará dentro de una plantilla con diseño profesional.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Criterios de Segmentación -->
+                        <div class="card mb-4 shadow-sm border-0">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Segmentación de Destinatarios</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="segmento-tipo" class="form-label">Tipo de Segmento</label>
+                                        <select class="form-select" id="segmento-tipo">
+                                            <option value="todos">📧 Todos los clientes suscritos</option>
+                                            <option value="activos">🔥 Clientes activos (compras recientes)</option>
+                                            <option value="inactivos">💤 Clientes inactivos (recuperación)</option>
+                                            <option value="premium">⭐ Clientes Premium (alto volumen)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="periodo-actividad" class="form-label">Período de Actividad</label>
+                                        <select class="form-select" id="periodo-actividad">
+                                            <option value="30">Últimos 30 días</option>
+                                            <option value="90">Últimos 3 meses</option>
+                                            <option value="180">Últimos 6 meses</option>
+                                            <option value="365">Último año</option>
+                                            <option value="todos">Todos los períodos</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <hr class="my-4">
+                                
+                                <button type="button" class="btn btn-primary" id="btn-calcular" onclick="calcularSegmento(event)">
+                                    <i class="bi bi-calculator me-1"></i>
+                                    Calcular Destinatarios
+                                </button>
+                                
+                                <!-- Resultados del Segmento -->
+                                <div id="resultados-segmento" style="display: none;" class="mt-4">
+                                    <div class="alert alert-info mb-0">
+                                        <div class="row text-center">
+                                            <div class="col-md-6">
+                                                <i class="bi bi-envelope-check fs-1 text-primary"></i>
+                                                <h3 class="mb-0 mt-2" id="clientes-elegibles">0</h3>
+                                                <small>Clientes recibirán el email</small>
+                                            </div>
+                                            <div class="col-md-6 border-start">
+                                                <i class="bi bi-envelope-x fs-1 text-muted"></i>
+                                                <h3 class="mb-0 mt-2 text-muted" id="clientes-excluidos">0</h3>
+                                                <small>Excluidos (sin suscripción)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info sobre exclusiones -->
+                        <div class="card mb-4 shadow-sm border-0">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Información de Envío</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-light border mb-0">
+                                    <h6 class="alert-heading"><i class="bi bi-shield-check me-1"></i>Respetamos las preferencias de los clientes:</h6>
+                                    <ul class="mb-0">
+                                        <li>Solo se envía a clientes que aceptaron recibir promociones por email</li>
+                                        <li>Los clientes pueden darse de baja en cualquier momento desde su cuenta</li>
+                                        <li>Los emails incluyen enlace para cancelar suscripción</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Previa y Envío -->
+                        <div id="seccion-envio" style="display: none;">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header bg-white">
+                                    <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Vista Previa y Confirmación</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6><i class="bi bi-list-check me-1"></i>Resumen:</h6>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Asunto:</strong> <span id="preview-asunto">-</span></li>
+                                                <li><strong>Segmento:</strong> <span id="preview-segmento">-</span></li>
+                                                <li><strong>Destinatarios:</strong> <span id="preview-destinatarios" class="badge bg-primary">0</span> clientes</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 bg-light">
+                                                <h6 class="text-muted"><i class="bi bi-chat-quote me-1"></i>Mensaje:</h6>
+                                                <p id="preview-mensaje" class="mb-0 fst-italic">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button class="btn btn-outline-secondary" onclick="limpiarFormulario()">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                            Limpiar
+                                        </button>
+                                        <button class="btn btn-success btn-lg" onclick="enviarCampana()" id="btn-enviar">
+                                            <i class="bi bi-send-fill me-2"></i>
+                                            Enviar Campaña de Email
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Historial de Campañas -->
+                    <div class="tab-pane fade" id="historial-campanias" role="tabpanel">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Campañas Enviadas</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="cargarHistorial()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+                                </button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>Estado</th>
+                                                <th>Destinatarios</th>
+                                                <th>Fecha Envío</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-historial">
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4">
+                                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                                    Cargando historial...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    
+    <script>
+        let campaniaActual = null;
+
+        // Verificar autenticación
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '../tu-cuenta/login.html?redirect=admin/notificaciones.html';
+            }
+            
+            document.getElementById('asunto-campana').addEventListener('input', actualizarPreview);
+            document.getElementById('mensaje-campana').addEventListener('input', actualizarPreview);
+            
+            // Cargar historial cuando se cambia al tab
+            document.getElementById('historial-tab').addEventListener('shown.bs.tab', cargarHistorial);
+        });
+
+        // Cargar historial de campañas
+        async function cargarHistorial() {
+            const tbody = document.getElementById('tabla-historial');
+            
+            try {
+                const campanias = await api.get('/campanias');
+                
+                if (!campanias || campanias.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-1"></i>
+                                <p class="mb-0 mt-2">No hay campañas registradas</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = campanias.map(c => `
+                    <tr>
+                        <td><span class="badge bg-secondary">#${c.id}</span></td>
+                        <td>${c.nombre}</td>
+                        <td>
+                            <span class="badge ${c.estado === 'enviada' ? 'bg-success' : c.estado === 'draft' ? 'bg-warning' : 'bg-secondary'}">
+                                ${c.estado === 'enviada' ? '<i class="bi bi-check-circle me-1"></i>' : '<i class="bi bi-clock me-1"></i>'}
+                                ${c.estado}
+                            </span>
+                        </td>
+                        <td><i class="bi bi-people me-1"></i>${c.cliente_count || 0}</td>
+                        <td>${c.fecha_envio ? new Date(c.fecha_envio).toLocaleString('es-CL') : '-'}</td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error cargando historial:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-danger">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            Error al cargar historial
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Calcular segmento (Crear Borrador de Campaña)
+        async function calcularSegmento(e) {
+            // Prevenir cualquier comportamiento por defecto
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            const btnCalcular = document.getElementById('btn-calcular');
+            const asuntoInput = document.getElementById('asunto-campana');
+            const mensajeInput = document.getElementById('mensaje-campana');
+            const asunto = asuntoInput.value.trim();
+            const mensaje = mensajeInput.value.trim();
+            const tipoSegmento = document.getElementById('segmento-tipo').value;
+            const periodoActividad = document.getElementById('periodo-actividad').value;
+            
+            console.log('=== CALCULAR SEGMENTO ===');
+            console.log('Asunto:', asunto);
+            console.log('Mensaje:', mensaje);
+            
+            // Validaciones del frontend
+            if (!asunto || asunto.length < 3) {
+                mostrarError('El asunto debe tener al menos 3 caracteres.');
+                asuntoInput.focus();
+                return false;
+            }
+            
+            if (!mensaje || mensaje.length < 5) {
+                mostrarError('El mensaje debe tener al menos 5 caracteres.');
+                mensajeInput.focus();
+                return false;
+            }
+
+            const criterios = {
+                tipo: tipoSegmento,
+                periodo: periodoActividad
+            };
+
+            const payload = {
+                nombre: asunto,
+                mensaje: mensaje,
+                criterios: criterios,
+                canal: "email"
+            };
+
+            // Deshabilitar botón mientras procesa
+            const textoOriginal = btnCalcular.innerHTML;
+            btnCalcular.disabled = true;
+            btnCalcular.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Calculando...';
+
+            try {
+                const response = await api.post('/campanias', payload);
+                console.log('Campaña creada:', response);
+                
+                // Guardar la campaña actual
+                campaniaActual = response;
+                
+                // Mostrar resultados
+                const clientesElegibles = response.cliente_count || 0;
+                document.getElementById('clientes-elegibles').textContent = clientesElegibles;
+                document.getElementById('clientes-excluidos').textContent = "0";
+                
+                // Mostrar secciones
+                document.getElementById('resultados-segmento').style.display = 'block';
+                document.getElementById('seccion-envio').style.display = 'block';
+                
+                // Actualizar preview manualmente (no depender de los inputs)
+                document.getElementById('preview-asunto').textContent = asunto;
+                document.getElementById('preview-mensaje').textContent = mensaje;
+                document.getElementById('preview-segmento').textContent = 
+                    document.getElementById('segmento-tipo').selectedOptions[0].text;
+                document.getElementById('preview-destinatarios').textContent = clientesElegibles;
+                
+                // Scroll suave a los resultados
+                document.getElementById('resultados-segmento').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                mostrarExito(`<i class="bi bi-check-circle me-2"></i>Campaña lista: <strong>${clientesElegibles} clientes</strong> recibirán el email`);
+                
+            } catch (error) {
+                console.error('Error al calcular segmento:', error);
+                let errorMsg = 'Error desconocido';
+                if (error.detail) {
+                    if (Array.isArray(error.detail)) {
+                        errorMsg = error.detail.map(e => e.msg || e.message).join(', ');
+                    } else {
+                        errorMsg = error.detail;
+                    }
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                mostrarError('Error al preparar campaña: ' + errorMsg);
+            } finally {
+                btnCalcular.disabled = false;
+                btnCalcular.innerHTML = textoOriginal;
+                console.log('=== FIN calcularSegmento ===');
+            }
+            
+            return false;
+        }
+
+        // Actualizar vista previa
+        function actualizarPreview() {
+            const asunto = document.getElementById('asunto-campana').value || '-';
+            const mensaje = document.getElementById('mensaje-campana').value || '-';
+            const tipoSegmento = document.getElementById('segmento-tipo').selectedOptions[0].text;
+            
+            document.getElementById('preview-asunto').textContent = asunto;
+            document.getElementById('preview-mensaje').textContent = mensaje;
+            document.getElementById('preview-segmento').textContent = tipoSegmento;
+            document.getElementById('preview-destinatarios').textContent = campaniaActual ? campaniaActual.cliente_count : 0;
+        }
+
+        // Enviar campaña
+        async function enviarCampana() {
+            if (!campaniaActual || !campaniaActual.id) {
+                mostrarError('Primero debes calcular los destinatarios.');
+                return;
+            }
+            
+            const btnEnviar = document.getElementById('btn-enviar');
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+            
+            try {
+                const response = await api.post(`/campanias/${campaniaActual.id}/enviar`);
+                
+                mostrarExito(`
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    ${response.message || 'Campaña enviada exitosamente'}
+                `);
+                
+                setTimeout(() => {
+                    limpiarFormulario();
+                    // Cambiar al tab de historial
+                    const historialTab = new bootstrap.Tab(document.getElementById('historial-tab'));
+                    historialTab.show();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error al enviar campaña:', error);
+                mostrarError('Error al enviar campaña: ' + (error.message || 'Error desconocido'));
+            } finally {
+                btnEnviar.disabled = false;
+                btnEnviar.innerHTML = '<i class="bi bi-send-fill me-2"></i>Enviar Campaña de Email';
+            }
+        }
+
+        // Limpiar formulario
+        function limpiarFormulario() {
+            document.getElementById('asunto-campana').value = '';
+            document.getElementById('mensaje-campana').value = '';
+            document.getElementById('segmento-tipo').value = 'todos';
+            document.getElementById('periodo-actividad').value = '30';
+            document.getElementById('resultados-segmento').style.display = 'none';
+            document.getElementById('seccion-envio').style.display = 'none';
+            campaniaActual = null;
+            
+            const mensajeContainer = document.getElementById('mensaje-container');
+            if (mensajeContainer) {
+                mensajeContainer.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

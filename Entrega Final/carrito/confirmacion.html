@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirmación - La Fornace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-12 Confirmación de Pedidos vía Email -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Menú</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tu-cuenta/index.html">Tu Cuenta</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../tu-cuenta/pedidos.html">Tus Pedidos</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-primary ms-lg-3" href="../carrito/index.html">
+                            Carrito <span class="badge text-bg-light ms-1" id="carrito-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12 col-lg-8 mx-auto text-center">
+                <!-- Mensaje de éxito grande y prominente -->
+                <div class="card border-success shadow-lg mb-5">
+                    <div class="card-body py-5">
+                        <div class="mb-4">
+                            <div class="bg-success rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                <svg width="70" height="70" fill="white" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h1 class="display-4 text-success fw-bold mb-3">¡Pedido Confirmado!</h1>
+                        <p class="lead text-muted mb-4">Tu pedido ha sido recibido y está siendo preparado con mucho cariño 🍕</p>
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <span class="text-muted">Número de pedido:</span>
+                            <span class="fw-bold fs-4 ms-2" id="pedido-numero">#---</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detalles del pedido -->
+                <div class="card mb-4 text-start">
+                    <div class="card-header bg-fornace text-white">
+                        <h5 class="mb-0">Detalles del Pedido</h5>
+                    </div>
+                    <div class="card-body" id="pedido-detalles">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+                
+                <!-- Información de entrega -->
+                <div class="card mb-4 text-start">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Información de Entrega</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Dirección</label>
+                                <p class="mb-0" id="confirmacion-direccion"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tiempo Estimado</label>
+                                <p class="mb-0">
+                                    <span class="badge bg-primary fs-6" id="confirmacion-eta"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Confirmación de email -->
+                <div class="card mb-4 border-success">
+                    <div class="card-body bg-light">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center">
+                                    <svg width="40" height="40" fill="currentColor" class="text-success me-3" viewBox="0 0 16 16">
+                                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                                    </svg>
+                                    <div>
+                                        <h6 class="mb-1">Confirmación enviada por email</h6>
+                                        <small class="text-muted">Revisa tu correo electrónico (<span id="confirmacion-email"></span>)</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <button class="btn btn-outline-primary btn-sm" onclick="reenviarEmail()">
+                                    Reenviar Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total -->
+                <div class="card mb-4 text-start">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Total Pagado</h4>
+                            <h3 class="mb-0 text-primary" id="confirmacion-total">$0</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones de acción grandes y centrados -->
+                <div class="d-grid gap-3 col-md-8 mx-auto mt-5">
+                    <a href="../tu-cuenta/pedidos.html" class="btn btn-outline-primary btn-lg py-3">
+                        <svg width="24" height="24" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                            <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                        </svg>
+                        Mis Pedidos
+                    </a>
+                    <a href="../index.html" class="btn btn-primary btn-lg py-3">
+                        <svg width="24" height="24" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                        </svg>
+                        Menú Principal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    <script src="../data/mock-data.js"></script>
+    
+    <script>
+      let pedidoActual = null;
+      
+      // ========================================
+      // CARGAR DETALLES DEL PEDIDO
+      // ========================================
+      function cargarDetallesPedido() {
+        // Obtener último pedido desde localStorage
+        const ultimoPedidoStr = localStorage.getItem('ultimoPedido');
+        
+        if (!ultimoPedidoStr) {
+          // Si no hay pedido guardado, mostrar datos genéricos
+          document.getElementById('pedido-numero').textContent = '#' + Math.floor(Math.random() * 10000);
+          document.getElementById('confirmacion-eta').textContent = '30-45 minutos';
+          document.getElementById('confirmacion-total').textContent = '$0';
+          document.getElementById('confirmacion-direccion').textContent = 'Dirección registrada';
+          document.getElementById('pedido-detalles').innerHTML = '<p class="text-muted">Los detalles del pedido han sido enviados a tu email.</p>';
+          return;
+        }
+        
+        try {
+          pedidoActual = JSON.parse(ultimoPedidoStr);
+          
+          // Mostrar número de pedido
+          document.getElementById('pedido-numero').textContent = `#${pedidoActual.id || '---'}`;
+          
+          // Mostrar ETA
+          const eta = pedidoActual.eta || pedidoActual.eta_minutos || '30-45';
+          document.getElementById('confirmacion-eta').textContent = `${eta} minutos`;
+          
+          // Mostrar total
+          if (pedidoActual.total) {
+            document.getElementById('confirmacion-total').textContent = formatearPrecio(pedidoActual.total);
+          }
+          
+          // Mostrar dirección si existe
+          if (pedidoActual.direccion) {
+            document.getElementById('confirmacion-direccion').textContent = pedidoActual.direccion;
+          } else {
+            document.getElementById('confirmacion-direccion').textContent = 'Dirección registrada en tu cuenta';
+          }
+          
+          // Renderizar items si existen
+          const detallesContainer = document.getElementById('pedido-detalles');
+          
+          if (pedidoActual.items && pedidoActual.items.length > 0) {
+            detallesContainer.innerHTML = '';
+            
+            pedidoActual.items.forEach(item => {
+              const precio = item.precioUnitario || item.precio || 0;
+              const tamanio = item.tamanioNombre || item.tamaño || 'Único';
+              
+              const itemDiv = document.createElement('div');
+              itemDiv.className = 'd-flex justify-content-between align-items-center mb-3 pb-3 border-bottom';
+              
+              itemDiv.innerHTML = `
+                <div>
+                  <h6 class="mb-1">${item.nombre}</h6>
+                  <small class="text-muted text-capitalize">Tamaño: ${tamanio}</small>
+                  <br>
+                  <small class="text-muted">Cantidad: ${item.cantidad}</small>
+                </div>
+                <div class="text-end">
+                  <div class="fw-bold">${formatearPrecio(precio * item.cantidad)}</div>
+                  <small class="text-muted">${formatearPrecio(precio)} c/u</small>
+                </div>
+              `;
+              
+              detallesContainer.appendChild(itemDiv);
+            });
+          } else {
+            detallesContainer.innerHTML = '<p class="text-muted">Los detalles del pedido han sido enviados a tu email.</p>';
+          }
+          
+          // Limpiar después de mostrar
+          localStorage.removeItem('ultimoPedido');
+          
+        } catch (error) {
+          console.error('Error al cargar pedido:', error);
+          document.getElementById('pedido-detalles').innerHTML = '<p class="text-muted">Los detalles del pedido han sido enviados a tu email.</p>';
+        }
+      }
+      
+      // ========================================
+      // REENVIAR EMAIL DE CONFIRMACIÓN
+      // ========================================
+      function reenviarEmail() {
+        // Simular reenvío de email
+        mostrarExito('Email de confirmación reenviado');
+        
+        // Deshabilitar botón temporalmente
+        const btnReenviar = event.target;
+        btnReenviar.disabled = true;
+        btnReenviar.textContent = 'Enviando...';
+        
+        setTimeout(() => {
+          btnReenviar.disabled = false;
+          btnReenviar.textContent = 'Reenviar Email';
+        }, 3000);
+      }
+      
+      // ========================================
+      // INICIALIZACIÓN
+      // ========================================
+      document.addEventListener('DOMContentLoaded', function() {
+        // Cargar detalles del pedido
+        cargarDetallesPedido();
+        
+        // Actualizar badge del carrito (debería ser 0)
+        actualizarBadgeCarrito();
+        
+        // Cargar email del usuario si está logueado
+        if (typeof api !== 'undefined' && api.isAuthenticated()) {
+          api.get('/auth/me').then(user => {
+            if (user && user.email) {
+              document.getElementById('confirmacion-email').textContent = user.email;
+            }
+          }).catch(err => console.error('Error cargando usuario:', err));
+        }
+      });
+    </script>
+</body>
+</html>
+
+

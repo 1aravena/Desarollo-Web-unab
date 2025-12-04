@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reportes de Ventas - La Fornace Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/png" href="../image/pizzeria_la_fornace_png.png">
+</head>
+<body class="bg-cream">
+    <!-- Historia: B-09 Reporte de Ventas + B-11 Exportación PDF -->
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-fornace sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="56" height="56" class="me-2">
+                <span>La Fornace Admin</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cocina.html">Cocina</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="reportes.html">Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ranking.html">Ranking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="notificaciones.html">Notificaciones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Volver a la Tienda</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">Reporte de Ventas</h2>
+                
+                <div id="mensaje-container"></div>
+
+                <!-- Filtros -->
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Filtros</h5>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="fecha-desde" class="form-label">Desde</label>
+                                <input type="date" class="form-control" id="fecha-desde">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fecha-hasta" class="form-label">Hasta</label>
+                                <input type="date" class="form-control" id="fecha-hasta">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="periodo" class="form-label">Período</label>
+                                <select class="form-select" id="periodo">
+                                    <option value="dia">Día</option>
+                                    <option value="semana">Semana</option>
+                                    <option value="mes" selected>Mes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-success w-100" onclick="generarReporte()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-fill me-1" viewBox="0 0 16 16">
+                                        <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+                                    </svg>
+                                    Generar Reporte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métricas -->
+                <div id="metricas-container" style="display: none;">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted mb-2">Ventas Totales</h6>
+                                    <h3 class="text-success mb-1" id="metric-ventas">$0</h3>
+                                    <small class="text-muted" id="metric-ventas-cambio"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted mb-2">Pedidos Totales</h6>
+                                    <h3 class="text-primary mb-1" id="metric-pedidos">0</h3>
+                                    <small class="text-muted" id="metric-pedidos-cambio"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted mb-2">Ticket Promedio</h6>
+                                    <h3 class="text-warning mb-1" id="metric-promedio">$0</h3>
+                                    <small class="text-muted" id="metric-promedio-cambio"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalle de Ventas -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Tendencias de Ventas</h5>
+                            <button class="btn btn-sm btn-danger" onclick="exportarPDF()">
+                                <i class="bi bi-file-pdf me-1"></i>
+                                Exportar PDF
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="tendencias-container">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Productos Más Vendidos (B-10) -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="bi bi-trophy me-2 text-warning"></i>Top Productos Vendidos</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="ranking-productos-container">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Pedidos Detallada -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Pedidos del Período</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Pedido #</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Items</th>
+                                            <th class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-pedidos">
+                                        <!-- Se llena dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado sin datos -->
+                <div id="sin-datos" class="text-center py-5">
+                    <i class="bi bi-graph-up display-1 text-muted mb-3"></i>
+                    <h4 class="text-muted">Selecciona un período para generar el reporte</h4>
+                    <p class="text-muted">Utiliza los filtros arriba para analizar tus ventas</p>
+                </div>
+
+                <!-- Estado cargando -->
+                <div id="cargando" class="text-center py-5" style="display: none;">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <h4 class="text-muted">Generando reporte...</h4>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small">
+            <img src="../image/pizzeria_la_fornace_png.png" alt="La Fornace" width="40" class="mb-2">
+            <div>Pizzería La Fornace · Solo entregamos calidad</div>
+            <div>© 2025 La Fornace · Todos los derechos reservados</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/api.js"></script>
+    <script src="../scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+        let datosReporte = null;
+
+        // Inicializar fechas por defecto y verificar auth
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!api.isAuthenticated()) {
+                window.location.href = '../tu-cuenta/login.html?redirect=admin/reportes.html';
+                return;
+            }
+
+            const hoy = new Date();
+            const hace30Dias = new Date();
+            hace30Dias.setDate(hoy.getDate() - 30);
+            
+            document.getElementById('fecha-hasta').valueAsDate = hoy;
+            document.getElementById('fecha-desde').valueAsDate = hace30Dias;
+        });
+
+        // Generar reporte
+        async function generarReporte() {
+            const fechaDesde = document.getElementById('fecha-desde').value;
+            const fechaHasta = document.getElementById('fecha-hasta').value;
+            const periodo = document.getElementById('periodo').value;
+            
+            if (!fechaDesde || !fechaHasta) {
+                mostrarError('Por favor selecciona ambas fechas');
+                return;
+            }
+            
+            if (new Date(fechaDesde) > new Date(fechaHasta)) {
+                mostrarError('La fecha "Desde" debe ser anterior a la fecha "Hasta"');
+                return;
+            }
+            
+            try {
+                // Mostrar estado de carga
+                document.getElementById('sin-datos').style.display = 'none';
+                document.getElementById('metricas-container').style.display = 'none';
+                document.getElementById('cargando').style.display = 'block';
+                
+                // Consultar API de pedidos con rango de fechas
+                // Usamos page_size=100 (máximo permitido por la API)
+                // Para reportes más grandes, implementar paginación
+                const params = new URLSearchParams({
+                    fecha_desde: new Date(fechaDesde).toISOString(),
+                    fecha_hasta: new Date(fechaHasta).toISOString(),
+                    page_size: 100
+                });
+
+                // Obtener todos los pedidos con paginación
+                let todosLosPedidos = [];
+                let page = 1;
+                let hayMasPedidos = true;
+                
+                while (hayMasPedidos) {
+                    params.set('page', page);
+                    const pedidosPage = await api.get(`/pedidos?${params.toString()}`);
+                    
+                    if (pedidosPage && pedidosPage.length > 0) {
+                        todosLosPedidos = todosLosPedidos.concat(pedidosPage);
+                        // Si recibimos menos de 100, ya no hay más páginas
+                        if (pedidosPage.length < 100) {
+                            hayMasPedidos = false;
+                        } else {
+                            page++;
+                        }
+                    } else {
+                        hayMasPedidos = false;
+                    }
+                }
+                
+                const pedidos = todosLosPedidos;
+                
+                // Filtrar anulados si el backend no lo hace por defecto (el backend trae todos)
+                const pedidosFiltrados = pedidos.filter(p => p.estado !== 'anulado' && p.estado !== 'cancelado');
+                
+                // Adaptar estructura de items si viene como JSON string o objeto
+                const pedidosProcesados = pedidosFiltrados.map(p => ({
+                    ...p,
+                    total: parseFloat(p.total) || 0,
+                    items: p.items_json ? p.items_json.items : []
+                }));
+
+                if (pedidosProcesados.length === 0) {
+                    mostrarInfo('No hay pedidos en el período seleccionado');
+                    document.getElementById('cargando').style.display = 'none';
+                    document.getElementById('metricas-container').style.display = 'none';
+                    document.getElementById('sin-datos').style.display = 'block';
+                    return;
+                }
+                
+                // Calcular métricas
+                const ventasTotales = pedidosProcesados.reduce((sum, p) => sum + p.total, 0);
+                const pedidosTotales = pedidosProcesados.length;
+                const ticketPromedio = ventasTotales / pedidosTotales;
+                
+                // Guardar datos para export PDF
+                datosReporte = {
+                    fechaDesde,
+                    fechaHasta,
+                    periodo,
+                    ventasTotales,
+                    pedidosTotales,
+                    ticketPromedio,
+                    pedidos: pedidosProcesados
+                };
+                
+                // Actualizar métricas
+                document.getElementById('metric-ventas').textContent = formatearPrecio(ventasTotales);
+                document.getElementById('metric-pedidos').textContent = pedidosTotales + ' pedidos';
+                document.getElementById('metric-promedio').textContent = formatearPrecio(ticketPromedio);
+                
+                // Generar tendencias
+                generarTendencias(pedidosProcesados, periodo);
+                
+                // Generar ranking de productos (B-10)
+                generarRankingProductos(pedidosProcesados);
+                
+                // Llenar tabla
+                llenarTablaPedidos(pedidosProcesados);
+                
+                // Mostrar resultados
+                document.getElementById('cargando').style.display = 'none';
+                document.getElementById('sin-datos').style.display = 'none';
+                document.getElementById('metricas-container').style.display = 'block';
+                
+                mostrarExito(`Reporte generado: ${pedidosTotales} pedidos encontrados`);
+
+            } catch (error) {
+                console.error('Error al generar reporte:', error);
+                document.getElementById('cargando').style.display = 'none';
+                document.getElementById('sin-datos').style.display = 'block';
+                mostrarError('Error al generar reporte: ' + error.message);
+            }
+        }
+
+        // Generar tendencias
+        function generarTendencias(pedidos, periodo) {
+            const container = document.getElementById('tendencias-container');
+            
+            // Agrupar por período
+            const grupos = {};
+            pedidos.forEach(p => {
+                const fecha = new Date(p.fecha);
+                let clave;
+                let orden; // Para ordenar cronológicamente
+                
+                if (periodo === 'dia') {
+                    clave = fecha.toLocaleDateString('es-CL');
+                    orden = fecha.getTime();
+                } else if (periodo === 'semana') {
+                    const semana = obtenerSemana(fecha);
+                    const año = fecha.getFullYear();
+                    clave = `Semana ${semana} (${año})`;
+                    orden = año * 100 + semana;
+                } else { // mes
+                    const mes = fecha.getMonth();
+                    const año = fecha.getFullYear();
+                    clave = fecha.toLocaleString('es-CL', { month: 'long', year: 'numeric' });
+                    orden = año * 100 + mes;
+                }
+                
+                if (!grupos[clave]) {
+                    grupos[clave] = { pedidos: 0, ventas: 0, orden: orden };
+                }
+                grupos[clave].pedidos++;
+                grupos[clave].ventas += parseFloat(p.total) || 0;
+            });
+            
+            // Ordenar por fecha (más reciente primero)
+            const gruposOrdenados = Object.entries(grupos)
+                .sort((a, b) => b[1].orden - a[1].orden);
+            
+            // Calcular máximos para barras de progreso
+            const maxVentas = Math.max(...gruposOrdenados.map(([, d]) => d.ventas));
+            
+            // Generar HTML de tendencias con gráfico de barras
+            let html = '<div class="row g-3">';
+            
+            gruposOrdenados.forEach(([clave, datos]) => {
+                const promedio = datos.ventas / datos.pedidos;
+                const porcentajeVentas = maxVentas > 0 ? (datos.ventas / maxVentas) * 100 : 0;
+                
+                html += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="text-primary mb-3"><i class="bi bi-calendar-event me-1"></i>${clave}</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">Pedidos:</span>
+                                    <span class="badge bg-primary">${datos.pedidos}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">Ventas:</span>
+                                    <strong class="text-success">${formatearPrecio(datos.ventas)}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">Ticket Prom.:</span>
+                                    <strong>${formatearPrecio(promedio)}</strong>
+                                </div>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: ${porcentajeVentas}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        // Generar ranking de productos más vendidos (B-10)
+        function generarRankingProductos(pedidos) {
+            const container = document.getElementById('ranking-productos-container');
+            
+            // Contar productos vendidos
+            const productosVendidos = {};
+            pedidos.forEach(p => {
+                if (p.items && Array.isArray(p.items)) {
+                    p.items.forEach(item => {
+                        const nombre = item.nombre || 'Producto desconocido';
+                        const cantidad = parseInt(item.cantidad) || 1;
+                        const precio = parseFloat(item.precio_unitario) || 0;
+                        
+                        if (!productosVendidos[nombre]) {
+                            productosVendidos[nombre] = {
+                                cantidad: 0,
+                                ingresos: 0
+                            };
+                        }
+                        productosVendidos[nombre].cantidad += cantidad;
+                        productosVendidos[nombre].ingresos += precio * cantidad;
+                    });
+                }
+            });
+            
+            // Convertir a array y ordenar por cantidad
+            const ranking = Object.entries(productosVendidos)
+                .map(([nombre, datos]) => ({ nombre, ...datos }))
+                .sort((a, b) => b.cantidad - a.cantidad)
+                .slice(0, 10); // Top 10
+            
+            if (ranking.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No hay datos de productos</p>';
+                return;
+            }
+            
+            // Encontrar el máximo para la barra de progreso
+            const maxCantidad = ranking[0].cantidad;
+            
+            let html = '<div class="table-responsive"><table class="table table-hover mb-0">';
+            html += '<thead class="table-light"><tr><th>#</th><th>Producto</th><th>Cantidad</th><th>Ingresos</th><th>Popularidad</th></tr></thead><tbody>';
+            
+            ranking.forEach((producto, index) => {
+                const porcentaje = (producto.cantidad / maxCantidad) * 100;
+                const medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+                
+                html += `
+                    <tr>
+                        <td><strong>${medalla}</strong></td>
+                        <td>${producto.nombre}</td>
+                        <td><span class="badge bg-primary">${producto.cantidad}</span></td>
+                        <td class="text-success"><strong>${formatearPrecio(producto.ingresos)}</strong></td>
+                        <td style="width: 200px;">
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: ${porcentaje}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+            
+            // Guardar ranking en datosReporte para el PDF
+            if (datosReporte) {
+                datosReporte.rankingProductos = ranking;
+            }
+        }
+
+        // Llenar tabla de pedidos
+        function llenarTablaPedidos(pedidos) {
+            const tbody = document.getElementById('tabla-pedidos');
+            
+            tbody.innerHTML = pedidos.map(p => {
+                const estadoInfo = obtenerInfoEstado(p.estado);
+                const resumenItems = p.items.map(i => `${i.cantidad}x ${i.nombre}`).join(', ');
+                
+                return `
+                    <tr>
+                        <td><strong>#${p.id}</strong></td>
+                        <td>${new Date(p.fecha).toLocaleDateString('es-CL')}</td>
+                        <td><span class="badge ${estadoInfo.clase}">${estadoInfo.texto}</span></td>
+                        <td><small>${resumenItems}</small></td>
+                        <td class="text-end"><strong>${formatearPrecio(p.total)}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Obtener número de semana del año
+        function obtenerSemana(fecha) {
+            const primerDia = new Date(fecha.getFullYear(), 0, 1);
+            const dias = Math.floor((fecha - primerDia) / (24 * 60 * 60 * 1000));
+            return Math.ceil((dias + primerDia.getDay() + 1) / 7);
+        }
+
+        // Obtener información del estado
+        function obtenerInfoEstado(estado) {
+            const estados = {
+                'confirmado': { texto: 'Confirmado', clase: 'bg-primary' },
+                'en_preparacion': { texto: 'En Preparación', clase: 'bg-warning text-dark' },
+                'en_camino': { texto: 'En Camino', clase: 'bg-info' },
+                'entregado': { texto: 'Entregado', clase: 'bg-success' },
+                'anulado': { texto: 'Anulado', clase: 'bg-danger' },
+                'cancelado': { texto: 'Cancelado', clase: 'bg-danger' }
+            };
+            return estados[estado] || { texto: estado, clase: 'bg-secondary' };
+        }
+
+        // Exportar a PDF (B-11)
+        async function exportarPDF() {
+            if (!datosReporte) {
+                mostrarError('Primero genera un reporte');
+                return;
+            }
+            
+            try {
+                // Opción 1: Generar PDF en cliente (como estaba)
+                // Opción 2: Usar endpoint de backend si existiera
+                // Mantenemos la generación en cliente por ahora ya que tenemos los datos
+                
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Título
+                doc.setFontSize(18);
+                doc.text('Pizzería La Fornace', 105, 20, { align: 'center' });
+                doc.setFontSize(14);
+                doc.text('Reporte de Ventas', 105, 28, { align: 'center' });
+                
+                // Información del período
+                doc.setFontSize(10);
+                doc.text(`Período: ${datosReporte.fechaDesde} - ${datosReporte.fechaHasta}`, 20, 40);
+                doc.text(`Generado: ${new Date().toLocaleString('es-CL')}`, 20, 46);
+                
+                // Métricas principales
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('Resumen de Métricas', 20, 58);
+                
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                doc.text(`Ventas Totales: ${formatearPrecio(datosReporte.ventasTotales)}`, 20, 66);
+                doc.text(`Pedidos Totales: ${datosReporte.pedidosTotales} pedidos`, 20, 72);
+                doc.text(`Ticket Promedio: ${formatearPrecio(datosReporte.ticketPromedio)}`, 20, 78);
+                
+                // Ranking de productos (B-10)
+                if (datosReporte.rankingProductos && datosReporte.rankingProductos.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.setFontSize(12);
+                    doc.text('Top Productos Vendidos', 20, 90);
+                    
+                    doc.setFont(undefined, 'normal');
+                    doc.setFontSize(9);
+                    
+                    let yRanking = 98;
+                    datosReporte.rankingProductos.slice(0, 5).forEach((producto, index) => {
+                        const medalla = index === 0 ? '1°' : index === 1 ? '2°' : index === 2 ? '3°' : `${index + 1}°`;
+                        doc.text(`${medalla} ${producto.nombre} - ${producto.cantidad} unidades - ${formatearPrecio(producto.ingresos)}`, 20, yRanking);
+                        yRanking += 6;
+                    });
+                }
+                
+                // Detalle de pedidos
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.text('Detalle de Pedidos', 20, 130);
+                
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(9);
+                
+                let y = 138;
+                datosReporte.pedidos.forEach((p, index) => {
+                    if (y > 270) { // Nueva página si es necesario
+                        doc.addPage();
+                        y = 20;
+                    }
+                    
+                    const estadoInfo = obtenerInfoEstado(p.estado);
+                    const fechaStr = new Date(p.fecha).toLocaleDateString('es-CL');
+                    doc.text(`#${p.id} - ${fechaStr} - ${estadoInfo.texto} - ${formatearPrecio(p.total)}`, 20, y);
+                    y += 6;
+                });
+                
+                // Footer
+                const totalPages = doc.internal.pages.length - 1;
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.text(`Página ${i} de ${totalPages}`, 105, 290, { align: 'center' });
+                }
+                
+                // Descargar
+                doc.save(`reporte-ventas-${datosReporte.fechaDesde}-${datosReporte.fechaHasta}.pdf`);
+                mostrarExito('Reporte PDF descargado exitosamente');
+                
+                // Opcional: Registrar la exportación en el backend
+                // await api.post('/reportes/export-log', { ... });
+                
+            } catch (error) {
+                console.error('Error al exportar PDF:', error);
+                mostrarError('Error al generar PDF');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
